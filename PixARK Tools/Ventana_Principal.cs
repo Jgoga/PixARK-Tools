@@ -2017,7 +2017,7 @@ namespace PixARK_Tools
             try
             {
                 this.Cursor = Cursors.WaitCursor;
-                Program.Ejecutar_Ruta("", ProcessWindowStyle.Normal);
+                Program.Ejecutar_Ruta("https://pixark.snail.com/", ProcessWindowStyle.Normal);
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
             finally { this.Cursor = Cursors.Default; }
