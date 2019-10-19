@@ -20,11 +20,11 @@ namespace PixARK_Tools
         /// <summary>
         /// The build and update date of this tool, used to know if older settings should be reset.
         /// </summary>
-        internal static readonly string Texto_Fecha = "2019_10_11_21_30_39_199"; // 2019_10_07_09_47_43_204.
+        internal static readonly string Texto_Fecha = "2019_10_18_20_55_58_069"; // 2019_10_07_09_47_43_204.
         /// <summary>
         /// The maximum PixARK version that this tool was tested with (if I looked it right). Others might not work at all.
         /// </summary>
-        internal static readonly string Texto_PixARK_Versión = "1.54";
+        internal static readonly string Texto_PixARK_Versión = "1.67";
 
         /// <summary>
         /// Since the application was first designed for "Xisumavoid", this will be the default user name, but can be changed later from the help menu.
@@ -35,6 +35,8 @@ namespace PixARK_Tools
         internal static readonly string Texto_Versión = "1.0";
         internal static readonly string Texto_Versión_Fecha = Texto_Versión + " (" + Texto_Fecha/*.Replace("_", null)*/ + ")";
         internal static string Texto_Título_Versión = Texto_Título + " " + Texto_Versión;
+
+        internal static Random Rand = new Random();
 
         /// <summary>
         /// Using this icon instead of adding it to the designer of each form saved almost 11 MB of space in the whole application. Why doesn't .NET make a CRC of the icon and only adds it once to the whole project?
@@ -48,6 +50,76 @@ namespace PixARK_Tools
         internal static readonly char Caracter_Coma_Decimal = (0.5d).ToString()[1];
         internal static readonly char Caracter_Punto_Decimal = Caracter_Coma_Decimal != '.' ? '.' : ',';
         internal static readonly char Caracter_Signo_Negativo = (-1).ToString()[0];
+
+        internal static readonly Color[] Matriz_12_Colores = new Color[12]
+        {
+            Color.FromArgb(255, 255, 0, 0), // Red.
+            Color.FromArgb(255, 255, 160, 0), // Orange.
+            Color.FromArgb(255, 255, 255, 0), // Yellow.
+            Color.FromArgb(255, 160, 255, 0), // Lime.
+            Color.FromArgb(255, 0, 255, 0), // Green.
+            Color.FromArgb(255, 0, 255, 160), // Turquoise.
+            Color.FromArgb(255, 0, 255, 255), // Cyan.
+            Color.FromArgb(255, 0, 160, 255), // Light blue.
+            Color.FromArgb(255, 0, 0, 255), // Blue.
+            Color.FromArgb(255, 160, 0, 255), // Purple.
+            Color.FromArgb(255, 255, 0, 255), // Magenta.
+            Color.FromArgb(255, 255, 0, 160), // Pink.
+        };
+        internal static readonly Color[] Matriz_8_Colores = new Color[8]
+        {
+            Color.FromArgb(255, 0, 0, 0), // Black.
+            Color.FromArgb(255, 255, 0, 0), // Red.
+            Color.FromArgb(255, 255, 255, 0), // Yellow.
+            Color.FromArgb(255, 0, 255, 0), // Green.
+            Color.FromArgb(255, 0, 255, 255), // Cyan.
+            Color.FromArgb(255, 0, 0, 255), // Blue.
+            Color.FromArgb(255, 255, 0, 255), // Magenta.
+            Color.FromArgb(255, 255, 255, 255) // White.
+        };
+        internal static readonly Color[] Matriz_Colores_12_Notas = new Color[12] { Color.FromArgb(255, 0, 0), Color.FromArgb(255, 144, 0), Color.FromArgb(255, 176, 0), Color.FromArgb(255, 216, 0), Color.FromArgb(255, 255, 0), Color.FromArgb(0, 255, 0), Color.FromArgb(0, 255, 192), Color.FromArgb(0, 96, 255), Color.FromArgb(80, 0, 255), Color.FromArgb(128, 0, 255), Color.FromArgb(160, 0, 255), Color.FromArgb(255, 0, 176) };
+        internal static readonly Pen[] Matriz_Lápices_12_Notas = new Pen[12] { new Pen(Color.FromArgb(255, 0, 0)), new Pen(Color.FromArgb(255, 144, 0)), new Pen(Color.FromArgb(255, 176, 0)), new Pen(Color.FromArgb(255, 216, 0)), new Pen(Color.FromArgb(255, 255, 0)), new Pen(Color.FromArgb(0, 255, 0)), new Pen(Color.FromArgb(0, 255, 192)), new Pen(Color.FromArgb(0, 96, 255)), new Pen(Color.FromArgb(80, 0, 255)), new Pen(Color.FromArgb(128, 0, 255)), new Pen(Color.FromArgb(160, 0, 255)), new Pen(Color.FromArgb(255, 0, 176)) };
+        internal static readonly SolidBrush[] Matriz_Pinceles_12_Notas = new SolidBrush[12] { new SolidBrush(Color.FromArgb(255, 0, 0)), new SolidBrush(Color.FromArgb(255, 144, 0)), new SolidBrush(Color.FromArgb(255, 176, 0)), new SolidBrush(Color.FromArgb(255, 216, 0)), new SolidBrush(Color.FromArgb(255, 255, 0)), new SolidBrush(Color.FromArgb(0, 255, 0)), new SolidBrush(Color.FromArgb(0, 255, 192)), new SolidBrush(Color.FromArgb(0, 96, 255)), new SolidBrush(Color.FromArgb(80, 0, 255)), new SolidBrush(Color.FromArgb(128, 0, 255)), new SolidBrush(Color.FromArgb(160, 0, 255)), new SolidBrush(Color.FromArgb(255, 0, 176)) };
+
+        /// <summary>
+        /// Array that stores 16 of the 1.530 unique colors with pure hue, maximum saturation and middle lightness, but in a loop of 16 for it's 256 values.
+        /// </summary>
+        internal static Color[] Matriz_Colores_Arco_Iris_16 = null;
+        /// <summary>
+        /// Array that stores the 256 unique gray scale colors in 8 bits, so the red, green and blue channels are the same for each color. Can also represent each possible byte with a unique gray tone.
+        /// </summary>
+        internal static Color[] Matriz_Colores_Grises_256 = null;
+        /// <summary>
+        /// Array that stores 256 of the 1.530 unique colors with pure hue, maximum saturation and middle lightness.
+        /// </summary>
+        internal static Color[] Matriz_Colores_Arco_Iris_256 = null;
+        /// <summary>
+        /// Array that stores 256 colors with pure hue, maximum saturation and middle lightness, but used for termography or topography, where the index 0 is fuchsia (magenta) and the index 255 in red, so it contains 83,3333 % of a full rainbow (5 of 6) but in reverse order.
+        /// </summary>
+        internal static Color[] Matriz_Colores_Termografía_256 = null;
+
+        /// <summary>
+        /// Function that returns one of the 1.530 possible 24 bits RGB colors with full saturation and middle brightness.
+        /// </summary>
+        /// <param name="Índice">Any value between 0 and 1529. Red = 0, Yellow = 255, Green = 510, Cyan = 765, blue = 1020, purple = 1275. If the value is below 0 or above 1529, pure white will be returned instead.</param>
+        /// <returns>Returns an ARGB color based on the selected index, or white if out of bounds.</returns>
+        internal static Color Obtener_Color_Puro_1530(int Índice)
+        {
+            try
+            {
+                if (Índice >= 0 && Índice <= 1529)
+                {
+                    if (Índice < 255) return Color.FromArgb(255, Índice, 0);
+                    else if (Índice < 510) return Color.FromArgb(510 - Índice, 255, 0);
+                    else if (Índice < 765) return Color.FromArgb(0, 255, 255 - (765 - Índice));
+                    else if (Índice < 1020) return Color.FromArgb(0, 1020 - Índice, 255);
+                    else if (Índice < 1275) return Color.FromArgb(255 - (1275 - Índice), 0, 255);
+                    else return Color.FromArgb(255, 0, 1530 - Índice);
+                }
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
+            return Color.FromArgb(255, 255, 255);
+        }
 
         internal static class HSL
         {
@@ -708,6 +780,82 @@ namespace PixARK_Tools
             return null;
         }
 
+        internal static string Traducir_Lista_Variables(List<short> Lista_Objetos)
+        {
+            try
+            {
+                if (Lista_Objetos != null && Lista_Objetos.Count > 0)
+                {
+                    string Texto = null;
+                    foreach (short Valor in Lista_Objetos)
+                    {
+                        try { Texto += Valor.ToString() + ", "; }
+                        catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); continue; }
+                    }
+                    if (!string.IsNullOrEmpty(Texto)) return Texto.TrimEnd(", ".ToCharArray());
+                }
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
+            return null;
+        }
+
+        internal static string Traducir_Lista_Variables(short[] Matriz_Objetos)
+        {
+            try
+            {
+                if (Matriz_Objetos != null && Matriz_Objetos.Length > 0)
+                {
+                    string Texto = null;
+                    foreach (short Valor in Matriz_Objetos)
+                    {
+                        try { Texto += Valor.ToString() + ", "; }
+                        catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); continue; }
+                    }
+                    if (!string.IsNullOrEmpty(Texto)) return Texto.TrimEnd(", ".ToCharArray());
+                }
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
+            return null;
+        }
+
+        internal static string Traducir_Lista_Variables(List<ushort> Lista_Objetos)
+        {
+            try
+            {
+                if (Lista_Objetos != null && Lista_Objetos.Count > 0)
+                {
+                    string Texto = null;
+                    foreach (ushort Valor in Lista_Objetos)
+                    {
+                        try { Texto += Valor.ToString() + ", "; }
+                        catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); continue; }
+                    }
+                    if (!string.IsNullOrEmpty(Texto)) return Texto.TrimEnd(", ".ToCharArray());
+                }
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
+            return null;
+        }
+
+        internal static string Traducir_Lista_Variables(ushort[] Matriz_Objetos)
+        {
+            try
+            {
+                if (Matriz_Objetos != null && Matriz_Objetos.Length > 0)
+                {
+                    string Texto = null;
+                    foreach (ushort Valor in Matriz_Objetos)
+                    {
+                        try { Texto += Valor.ToString() + ", "; }
+                        catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); continue; }
+                    }
+                    if (!string.IsNullOrEmpty(Texto)) return Texto.TrimEnd(", ".ToCharArray());
+                }
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
+            return null;
+        }
+
         internal static string Traducir_Número(sbyte Valor)
         {
             return Valor.ToString();
@@ -1055,13 +1203,25 @@ namespace PixARK_Tools
                 }*/
             }
             Depurador.Iniciar_Depurador();
+            Matriz_Colores_Arco_Iris_16 = new Color[256];
+            Matriz_Colores_Grises_256 = new Color[256];
+            Matriz_Colores_Arco_Iris_256 = new Color[256];
+            Matriz_Colores_Termografía_256 = new Color[256];
+            for (int Índice = 0; Índice < 256; Índice++)
+            {
+                int Índice_Arco_Iris_16 = ((Índice % 16) * 1529) / 16;
+                int Índice_Arco_Iris = (Índice * 1529) / 255;
+                int Índice_Termografía = 1275 - ((Índice * 1275) / 255);
+                Matriz_Colores_Arco_Iris_16[Índice] = Obtener_Color_Puro_1530(Índice_Arco_Iris_16);
+                //Matriz_Colores_Arco_Iris_16[Índice] = Color.FromArgb(255, ((Índice % 16) * 16) + 15, ((Índice % 16) * 16) + 15, ((Índice % 16) * 16) + 15);
+                Matriz_Colores_Grises_256[Índice] = Color.FromArgb(255, Índice, Índice, Índice);
+                Matriz_Colores_Arco_Iris_256[Índice] = Obtener_Color_Puro_1530(Índice_Arco_Iris);
+                Matriz_Colores_Termografía_256[Índice] = Obtener_Color_Puro_1530(Índice_Termografía);
+            }
             Lista_Caracteres_Prohibidos.AddRange(Path.GetInvalidPathChars());
             Lista_Caracteres_Prohibidos.AddRange(Path.GetInvalidFileNameChars());
             try { Rendimiento_Procesador = new PerformanceCounter("Processor", "% Processor Time", "_Total", true); }
             catch { Rendimiento_Procesador = null; }
-
-
-
             Application.Run(new Ventana_Principal());
         }
     }

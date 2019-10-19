@@ -1,6 +1,6 @@
 ﻿namespace PixARK_Tools
 {
-    partial class Ventana_Plantilla
+    partial class Ventana_Visor_Bases_Datos
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.Menú_Contextual = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.Menú_Contextual_Visor_Ayuda = new System.Windows.Forms.ToolStripMenuItem();
             this.Menú_Contextual_Acerca = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,11 +63,23 @@
             this.Barra_Estado_Etiqueta_Sugerencia = new System.Windows.Forms.ToolStripLabel();
             this.Barra_Estado_Separador_5 = new System.Windows.Forms.ToolStripSeparator();
             this.Temporizador_Principal = new System.Windows.Forms.Timer(this.components);
-            this.Picture = new System.Windows.Forms.PictureBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.Picture = new System.Windows.Forms.PictureBox();
+            this.ComboBox_Ruta = new System.Windows.Forms.ComboBox();
+            this.Etiqueta_Ruta = new System.Windows.Forms.Label();
+            this.Botón_Cargar = new System.Windows.Forms.Button();
+            this.DataGridView_Principal = new System.Windows.Forms.DataGridView();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.Etiqueta_Fila = new System.Windows.Forms.Label();
+            this.ComboBox_Fila = new System.Windows.Forms.ComboBox();
+            this.Botón_Guardar = new System.Windows.Forms.Button();
+            this.Botón_Explorar = new System.Windows.Forms.Button();
+            this.ListView_Bytes = new System.Windows.Forms.ListView();
             this.Menú_Contextual.SuspendLayout();
             this.Barra_Estado.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Picture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridView_Principal)).BeginInit();
             this.SuspendLayout();
             // 
             // Menú_Contextual
@@ -269,7 +284,7 @@
             this.Barra_Estado.Location = new System.Drawing.Point(0, 436);
             this.Barra_Estado.Name = "Barra_Estado";
             this.Barra_Estado.Size = new System.Drawing.Size(884, 25);
-            this.Barra_Estado.TabIndex = 2;
+            this.Barra_Estado.TabIndex = 7;
             this.Barra_Estado.Text = "Status bar";
             // 
             // Barra_Estado_Botón_Excepción
@@ -346,19 +361,6 @@
             this.Temporizador_Principal.Interval = 1;
             this.Temporizador_Principal.Tick += new System.EventHandler(this.Temporizador_Principal_Tick);
             // 
-            // Picture
-            // 
-            this.Picture.BackColor = System.Drawing.Color.Gray;
-            this.Picture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.Picture.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Picture.InitialImage = null;
-            this.Picture.Location = new System.Drawing.Point(0, 0);
-            this.Picture.Name = "Picture";
-            this.Picture.Size = new System.Drawing.Size(884, 436);
-            this.Picture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.Picture.TabIndex = 5;
-            this.Picture.TabStop = false;
-            // 
             // textBox1
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -368,37 +370,235 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(20, 20);
-            this.textBox1.TabIndex = 6;
+            this.textBox1.TabIndex = 9;
             this.textBox1.Visible = false;
             // 
-            // Ventana_Plantilla
+            // Picture
+            // 
+            this.Picture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Picture.BackColor = System.Drawing.Color.Gray;
+            this.Picture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.Picture.InitialImage = null;
+            this.Picture.Location = new System.Drawing.Point(12, 413);
+            this.Picture.Name = "Picture";
+            this.Picture.Size = new System.Drawing.Size(20, 20);
+            this.Picture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.Picture.TabIndex = 5;
+            this.Picture.TabStop = false;
+            // 
+            // ComboBox_Ruta
+            // 
+            this.ComboBox_Ruta.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ComboBox_Ruta.BackColor = System.Drawing.Color.White;
+            this.ComboBox_Ruta.FormattingEnabled = true;
+            this.ComboBox_Ruta.Location = new System.Drawing.Point(44, 11);
+            this.ComboBox_Ruta.Name = "ComboBox_Ruta";
+            this.ComboBox_Ruta.Size = new System.Drawing.Size(722, 21);
+            this.ComboBox_Ruta.TabIndex = 0;
+            this.ComboBox_Ruta.SelectedIndexChanged += new System.EventHandler(this.ComboBox_Ruta_SelectedIndexChanged);
+            this.ComboBox_Ruta.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Visor_Bases_Datos_KeyDown);
+            // 
+            // Etiqueta_Ruta
+            // 
+            this.Etiqueta_Ruta.AutoSize = true;
+            this.Etiqueta_Ruta.Location = new System.Drawing.Point(9, 15);
+            this.Etiqueta_Ruta.Margin = new System.Windows.Forms.Padding(0);
+            this.Etiqueta_Ruta.Name = "Etiqueta_Ruta";
+            this.Etiqueta_Ruta.Size = new System.Drawing.Size(32, 13);
+            this.Etiqueta_Ruta.TabIndex = 8;
+            this.Etiqueta_Ruta.Text = "Path:";
+            // 
+            // Botón_Cargar
+            // 
+            this.Botón_Cargar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Botón_Cargar.Image = global::PixARK_Tools.Properties.Resources.Mundo;
+            this.Botón_Cargar.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.Botón_Cargar.Location = new System.Drawing.Point(772, 10);
+            this.Botón_Cargar.Name = "Botón_Cargar";
+            this.Botón_Cargar.Size = new System.Drawing.Size(100, 24);
+            this.Botón_Cargar.TabIndex = 1;
+            this.Botón_Cargar.Text = " Load file... ";
+            this.Botón_Cargar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.Botón_Cargar.UseVisualStyleBackColor = true;
+            this.Botón_Cargar.Click += new System.EventHandler(this.Botón_Cargar_Click);
+            this.Botón_Cargar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Visor_Bases_Datos_KeyDown);
+            // 
+            // DataGridView_Principal
+            // 
+            this.DataGridView_Principal.AllowUserToAddRows = false;
+            this.DataGridView_Principal.AllowUserToDeleteRows = false;
+            this.DataGridView_Principal.AllowUserToResizeRows = false;
+            this.DataGridView_Principal.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DataGridView_Principal.BackgroundColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DataGridView_Principal.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.DataGridView_Principal.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataGridView_Principal.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.DataGridView_Principal.Location = new System.Drawing.Point(12, 64);
+            this.DataGridView_Principal.MultiSelect = false;
+            this.DataGridView_Principal.Name = "DataGridView_Principal";
+            this.DataGridView_Principal.ReadOnly = true;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DataGridView_Principal.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.DataGridView_Principal.RowHeadersVisible = false;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DataGridView_Principal.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            this.DataGridView_Principal.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.DataGridView_Principal.Size = new System.Drawing.Size(860, 369);
+            this.DataGridView_Principal.TabIndex = 5;
+            this.DataGridView_Principal.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.DataGridView_Principal_DataError);
+            this.DataGridView_Principal.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Visor_Bases_Datos_KeyDown);
+            // 
+            // textBox2
+            // 
+            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.Enabled = false;
+            this.textBox2.Location = new System.Drawing.Point(852, 38);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
+            this.textBox2.Size = new System.Drawing.Size(20, 20);
+            this.textBox2.TabIndex = 10;
+            this.textBox2.Visible = false;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.Enabled = false;
+            this.textBox3.Location = new System.Drawing.Point(852, 64);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
+            this.textBox3.Size = new System.Drawing.Size(20, 20);
+            this.textBox3.TabIndex = 11;
+            this.textBox3.Visible = false;
+            // 
+            // Etiqueta_Fila
+            // 
+            this.Etiqueta_Fila.AutoSize = true;
+            this.Etiqueta_Fila.Location = new System.Drawing.Point(9, 41);
+            this.Etiqueta_Fila.Margin = new System.Windows.Forms.Padding(0);
+            this.Etiqueta_Fila.Name = "Etiqueta_Fila";
+            this.Etiqueta_Fila.Size = new System.Drawing.Size(32, 13);
+            this.Etiqueta_Fila.TabIndex = 2;
+            this.Etiqueta_Fila.Text = "Row:";
+            // 
+            // ComboBox_Fila
+            // 
+            this.ComboBox_Fila.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ComboBox_Fila.BackColor = System.Drawing.Color.White;
+            this.ComboBox_Fila.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBox_Fila.FormattingEnabled = true;
+            this.ComboBox_Fila.Location = new System.Drawing.Point(44, 37);
+            this.ComboBox_Fila.Name = "ComboBox_Fila";
+            this.ComboBox_Fila.Size = new System.Drawing.Size(616, 21);
+            this.ComboBox_Fila.TabIndex = 3;
+            this.ComboBox_Fila.SelectedIndexChanged += new System.EventHandler(this.ComboBox_Fila_SelectedIndexChanged);
+            this.ComboBox_Fila.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Visor_Bases_Datos_KeyDown);
+            // 
+            // Botón_Guardar
+            // 
+            this.Botón_Guardar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Botón_Guardar.Image = global::PixARK_Tools.Properties.Resources.Guardar;
+            this.Botón_Guardar.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.Botón_Guardar.Location = new System.Drawing.Point(772, 36);
+            this.Botón_Guardar.Name = "Botón_Guardar";
+            this.Botón_Guardar.Size = new System.Drawing.Size(100, 24);
+            this.Botón_Guardar.TabIndex = 5;
+            this.Botón_Guardar.Text = " Save cell... ";
+            this.Botón_Guardar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.Botón_Guardar.UseVisualStyleBackColor = true;
+            this.Botón_Guardar.Click += new System.EventHandler(this.Botón_Guardar_Click);
+            this.Botón_Guardar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Visor_Bases_Datos_KeyDown);
+            // 
+            // Botón_Explorar
+            // 
+            this.Botón_Explorar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Botón_Explorar.Image = global::PixARK_Tools.Properties.Resources.Ejecutar;
+            this.Botón_Explorar.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.Botón_Explorar.Location = new System.Drawing.Point(666, 36);
+            this.Botón_Explorar.Name = "Botón_Explorar";
+            this.Botón_Explorar.Size = new System.Drawing.Size(100, 24);
+            this.Botón_Explorar.TabIndex = 4;
+            this.Botón_Explorar.Text = " Explore... ";
+            this.Botón_Explorar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.Botón_Explorar.UseVisualStyleBackColor = true;
+            this.Botón_Explorar.Click += new System.EventHandler(this.Botón_Explorar_Click);
+            this.Botón_Explorar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Visor_Bases_Datos_KeyDown);
+            // 
+            // ListView_Bytes
+            // 
+            this.ListView_Bytes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ListView_Bytes.BackColor = System.Drawing.Color.White;
+            this.ListView_Bytes.FullRowSelect = true;
+            this.ListView_Bytes.Location = new System.Drawing.Point(12, 64);
+            this.ListView_Bytes.Name = "ListView_Bytes";
+            this.ListView_Bytes.Size = new System.Drawing.Size(860, 369);
+            this.ListView_Bytes.TabIndex = 6;
+            this.ListView_Bytes.UseCompatibleStateImageBehavior = false;
+            this.ListView_Bytes.View = System.Windows.Forms.View.List;
+            this.ListView_Bytes.Visible = false;
+            this.ListView_Bytes.SelectedIndexChanged += new System.EventHandler(this.ListView_Bytes_SelectedIndexChanged);
+            this.ListView_Bytes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Visor_Bases_Datos_KeyDown);
+            // 
+            // Ventana_Visor_Bases_Datos
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 461);
             this.ContextMenuStrip = this.Menú_Contextual;
+            this.Controls.Add(this.ListView_Bytes);
+            this.Controls.Add(this.Botón_Explorar);
+            this.Controls.Add(this.Etiqueta_Fila);
+            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.DataGridView_Principal);
+            this.Controls.Add(this.ComboBox_Ruta);
+            this.Controls.Add(this.Etiqueta_Ruta);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.Picture);
             this.Controls.Add(this.Barra_Estado);
+            this.Controls.Add(this.Botón_Cargar);
+            this.Controls.Add(this.ComboBox_Fila);
+            this.Controls.Add(this.Botón_Guardar);
             this.DoubleBuffered = true;
-            this.Name = "Ventana_Plantilla";
+            this.Name = "Ventana_Visor_Bases_Datos";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Template by Jupisoft";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Ventana_Plantilla_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Ventana_Plantilla_FormClosed);
-            this.Load += new System.EventHandler(this.Ventana_Plantilla_Load);
-            this.Shown += new System.EventHandler(this.Ventana_Plantilla_Shown);
-            this.SizeChanged += new System.EventHandler(this.Ventana_Plantilla_SizeChanged);
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Ventana_Plantilla_DragDrop);
-            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Ventana_Plantilla_DragEnter);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Plantilla_KeyDown);
+            this.Text = "SQLite Data Base Viewer by Jupisoft";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Ventana_Visor_Bases_Datos_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Ventana_Visor_Bases_Datos_FormClosed);
+            this.Load += new System.EventHandler(this.Ventana_Visor_Bases_Datos_Load);
+            this.Shown += new System.EventHandler(this.Ventana_Visor_Bases_Datos_Shown);
+            this.SizeChanged += new System.EventHandler(this.Ventana_Visor_Bases_Datos_SizeChanged);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Ventana_Visor_Bases_Datos_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Ventana_Visor_Bases_Datos_DragEnter);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ventana_Visor_Bases_Datos_KeyDown);
             this.Menú_Contextual.ResumeLayout(false);
             this.Barra_Estado.ResumeLayout(false);
             this.Barra_Estado.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Picture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridView_Principal)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -439,5 +639,16 @@
         private System.Windows.Forms.Timer Temporizador_Principal;
         private System.Windows.Forms.PictureBox Picture;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label Etiqueta_Ruta;
+        private System.Windows.Forms.Button Botón_Cargar;
+        private System.Windows.Forms.DataGridView DataGridView_Principal;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox3;
+        internal System.Windows.Forms.ComboBox ComboBox_Ruta;
+        private System.Windows.Forms.Label Etiqueta_Fila;
+        internal System.Windows.Forms.ComboBox ComboBox_Fila;
+        private System.Windows.Forms.Button Botón_Guardar;
+        private System.Windows.Forms.Button Botón_Explorar;
+        private System.Windows.Forms.ListView ListView_Bytes;
     }
 }

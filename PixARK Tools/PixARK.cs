@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PixARK_Tools
 {
@@ -24,6 +25,22 @@ namespace PixARK_Tools
         "Idx_name",
         "nx_configure",
         "sqlite_autoindex_nx_configure_1";*/
+
+        /// <summary>
+        /// Enumeration used to identify the climates of a PixARK biome. Not related to any in game numbers.
+        /// </summary>
+        internal enum Climas : int
+        {
+            Unknown = 0,
+            Sunny_Day,
+            Wind,
+            Sandstorm,
+            Snowy,
+            Rainy,
+            Thunderstorm,
+            Rain,
+            Miasma,
+        }
 
         /// <summary>
         /// Enumeration used to identify the difficulty of a PixARK biome. Not related to any in game numbers.
@@ -75,9 +92,9 @@ namespace PixARK_Tools
             /// </summary>
             Black_agate = 32,
             /// <summary>
-            /// Gives: Sulphur.
+            /// Gives: Sulfur.
             /// </summary>
-            Brenstone = 64,
+            Sulfur = 64,
             /// <summary>
             /// Gives: Coal.
             /// </summary>
@@ -89,7 +106,7 @@ namespace PixARK_Tools
             /// <summary>
             /// Gives: Flint.
             /// </summary>
-            Gravel = 512,
+            Flint = 512,
             /// <summary>
             /// Gives: Quartz.
             /// </summary>
@@ -101,7 +118,7 @@ namespace PixARK_Tools
             /// <summary>
             /// Gives: Sharp Crystal.
             /// </summary>
-            Spinel = 4096,
+            Sharp_Crystal = 4096,
             /// <summary>
             /// Gives: Water Magic Stone.
             /// </summary>
@@ -114,6 +131,9 @@ namespace PixARK_Tools
             /// Gives: Earth Magic Stone.
             /// </summary>
             Yellow_amber = 32768,
+
+            Sand = 65536,
+            Clay = 131072,
 
             // All the existing blocks, copied from the blocks "creative menu".
             /*Clay,
@@ -214,6 +234,34 @@ namespace PixARK_Tools
             /// </summary>
             internal static readonly Biomas[] Matriz_Biomas = new Biomas[]
             {
+                /*new Biomas(10, "Novice Grassland", "Novice Grassland", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 127, 233, 54), Color.FromArgb(255, 127, 233, 54), false),
+                new Biomas(2, "Grassland", "Grassland", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 76, 201, 48), Color.FromArgb(255, 76, 201, 48), false),
+                new Biomas(5, "Swamp", "Swamp", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 45, 152, 38), Color.FromArgb(255, 45, 152, 38), false),
+                new Biomas(8, "Mountain Forest", "Mountain Forest", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 30, 105, 46), Color.FromArgb(255, 30, 105, 46), false),
+                new Biomas(13, "River", "Deep Ocean", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 200, 252, 255), Color.FromArgb(255, 0, 252, 255), false),
+
+                new Biomas(0, "Deep Ocean", "Deep Ocean", Dificultades.Medium, Minerales.Unknown, Color.FromArgb(255, 0, 252, 255), Color.FromArgb(255, 0, 252, 255), false),
+                new Biomas(1, "Desert", "Desert", Dificultades.Medium, Minerales.Unknown, Color.FromArgb(255, 255, 255, 97), Color.FromArgb(255, 255, 255, 97), false),
+                new Biomas(4, "Magic Forest", "Magic Forest", Dificultades.Medium, Minerales.Unknown, Color.FromArgb(255, 115, 115, 255), Color.FromArgb(255, 115, 115, 255), false),
+                new Biomas(7, "Golden Realm", "Golden Realm", Dificultades.Medium, Minerales.Unknown, Color.FromArgb(255, 164, 128, 35), Color.FromArgb(255, 164, 128, 35), false),
+
+                new Biomas(6, "Dark Forest", "Dark Forest", Dificultades.Hard, Minerales.Unknown, Color.FromArgb(255, 66, 91, 96), Color.FromArgb(255, 66, 91, 96), false),
+                new Biomas(9, "Frozen Land", "Frozen Land", Dificultades.Hard, Minerales.Unknown, Color.FromArgb(255, 181, 255, 222), Color.FromArgb(255, 181, 255, 222), false),
+                new Biomas(3, "Doom Lands", "Doom Lands", Dificultades.Hard, Minerales.Unknown, Color.FromArgb(255, 118, 101, 73), Color.FromArgb(255, 118, 101, 73), false),
+
+                new Biomas(11, "Normal Island", "Deep Ocean", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 200, 176, 0), Color.FromArgb(255, 0, 252, 255), true),
+                new Biomas(14, "Plateau Iron Pit", "Golden Realm", Dificultades.Medium, Minerales.Iron | Minerales.Yellow_amber, Color.FromArgb(255, 255, 255, 0), Color.FromArgb(255, 164, 128, 35), true),
+                new Biomas(15, "Plains Coal Mine", "Grassland", Dificultades.Easy, Minerales.Copper | Minerales.Coal, Color.FromArgb(255, 96, 80, 64), Color.FromArgb(255, 76, 201, 48), true),
+                new Biomas(16, "Plateau Magic Pit", "Magic Forest", Dificultades.Medium, Minerales.Iron | Minerales.Emerald, Color.FromArgb(255, 0, 255, 0), Color.FromArgb(255, 115, 115, 255), true),
+                new Biomas(17, "Brenstone Mine", "Swamp", Dificultades.Easy, Minerales.Brenstone | Minerales.Iron, Color.FromArgb(255, 255, 208, 0), Color.FromArgb(255, 45, 152, 38), true),
+                new Biomas(18, "Plains Copper Mine", "Mountain Forest", Dificultades.Easy, Minerales.Copper | Minerales.Coal, Color.FromArgb(255, 255, 144, 0), Color.FromArgb(255, 30, 105, 46), true),
+                new Biomas(20, "Plateau Iron Mine", "Frozen Land", Dificultades.Hard, Minerales.Iron | Minerales.Topaz, Color.FromArgb(255, 64, 96, 255), Color.FromArgb(255, 181, 255, 222), true),
+                new Biomas(21, "Quartz Pit", "Desert", Dificultades.Medium, Minerales.Iron | Minerales.Quartz, Color.FromArgb(255, 176, 192, 176), Color.FromArgb(255, 255, 255, 97), true),
+                new Biomas(22, "Magic Mine", "Dark Forest", Dificultades.Hard, Minerales.Iron | Minerales.Amethyst, Color.FromArgb(255, 255, 0, 192), Color.FromArgb(255, 66, 91, 96), true),
+                new Biomas(23, "Silver Pit", "Doom Lands", Dificultades.Hard, Minerales.Silver | Minerales.Ruby, Color.FromArgb(255, 255, 0, 0), Color.FromArgb(255, 118, 101, 73), true),
+                new Biomas(12, "?", "?", Dificultades.Unknown, Minerales.Unknown, Color.FromArgb(255, 32, 32, 32), Color.FromArgb(255, 32, 32, 32), true),
+                new Biomas(19, "?", "?", Dificultades.Unknown, Minerales.Unknown, Color.FromArgb(255, 224, 224, 224), Color.FromArgb(255, 224, 224, 224), true),
+                */
                 new Biomas(0, "Deep Ocean", "Deep Ocean", Dificultades.Medium, Minerales.Unknown, Color.FromArgb(255, 0, 252, 255), Color.FromArgb(255, 0, 252, 255), false),
                 new Biomas(1, "Desert", "Desert", Dificultades.Medium, Minerales.Unknown, Color.FromArgb(255, 255, 255, 97), Color.FromArgb(255, 255, 255, 97), false),
                 new Biomas(2, "Grassland", "Grassland", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 76, 201, 48), Color.FromArgb(255, 76, 201, 48), false),
@@ -225,13 +273,13 @@ namespace PixARK_Tools
                 new Biomas(8, "Mountain Forest", "Mountain Forest", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 30, 105, 46), Color.FromArgb(255, 30, 105, 46), false),
                 new Biomas(9, "Frozen Land", "Frozen Land", Dificultades.Hard, Minerales.Unknown, Color.FromArgb(255, 181, 255, 222), Color.FromArgb(255, 181, 255, 222), false),
                 new Biomas(10, "Novice Grassland", "Novice Grassland", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 127, 233, 54), Color.FromArgb(255, 127, 233, 54), false),
-                new Biomas(11, "Normal Island", "Deep Ocean", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 200, 176, 0), Color.FromArgb(255, 0, 252, 255), true),
+                new Biomas(11, "Normal Island", "Deep Ocean", Dificultades.Easy, Minerales.Sand | Minerales.Clay, Color.FromArgb(255, 200, 176, 0), Color.FromArgb(255, 0, 252, 255), true),
                 new Biomas(12, "?", "?", Dificultades.Unknown, Minerales.Unknown, Color.FromArgb(255, 32, 32, 32), Color.FromArgb(255, 32, 32, 32), true),
-                new Biomas(13, "River", "Deep Ocean", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 200, 252, 255), Color.FromArgb(255, 0, 252, 255), false),
+                new Biomas(13, "River", "River", Dificultades.Easy, Minerales.Unknown, Color.FromArgb(255, 200, 252, 255), Color.FromArgb(255, 0, 252, 255), false),
                 new Biomas(14, "Plateau Iron Pit", "Golden Realm", Dificultades.Medium, Minerales.Iron | Minerales.Yellow_amber, Color.FromArgb(255, 255, 255, 0), Color.FromArgb(255, 164, 128, 35), true),
                 new Biomas(15, "Plains Coal Mine", "Grassland", Dificultades.Easy, Minerales.Copper | Minerales.Coal, Color.FromArgb(255, 96, 80, 64), Color.FromArgb(255, 76, 201, 48), true),
                 new Biomas(16, "Plateau Magic Pit", "Magic Forest", Dificultades.Medium, Minerales.Iron | Minerales.Emerald, Color.FromArgb(255, 0, 255, 0), Color.FromArgb(255, 115, 115, 255), true),
-                new Biomas(17, "Brenstone Mine", "Swamp", Dificultades.Easy, Minerales.Brenstone | Minerales.Iron, Color.FromArgb(255, 255, 208, 0), Color.FromArgb(255, 45, 152, 38), true),
+                new Biomas(17, "Brenstone Mine", "Swamp", Dificultades.Easy, Minerales.Sulfur | Minerales.Iron, Color.FromArgb(255, 255, 208, 0), Color.FromArgb(255, 45, 152, 38), true),
                 new Biomas(18, "Plains Copper Mine", "Mountain Forest", Dificultades.Easy, Minerales.Copper | Minerales.Coal, Color.FromArgb(255, 255, 144, 0), Color.FromArgb(255, 30, 105, 46), true),
                 new Biomas(19, "?", "?", Dificultades.Unknown, Minerales.Unknown, Color.FromArgb(255, 224, 224, 224), Color.FromArgb(255, 224, 224, 224), true),
                 new Biomas(20, "Plateau Iron Mine", "Frozen Land", Dificultades.Hard, Minerales.Iron | Minerales.Topaz, Color.FromArgb(255, 64, 96, 255), Color.FromArgb(255, 181, 255, 222), true),
@@ -262,16 +310,6 @@ namespace PixARK_Tools
         internal static readonly string Texto_Clave_Mundo = "nx_world";
 
         /// <summary>
-        /// In game press "Tab" and write this line of text, then press "Enter", now you should get grass blocks... since they can't be generated again?
-        /// </summary>
-        internal static readonly string Texto_Truco_Bloque_Hierba = "cheat giveitemnum 913 10 0 0";
-
-        /// <summary>
-        /// In game press "Tab" and write this line of text, then press "Enter", now you should see the whole world map.
-        /// </summary>
-        internal static readonly string Texto_Truco_Mostrar_Mapa = "cheat OpenFogofWar";
-
-        /// <summary>
         /// Array that stores several known path to the world saves of PixARK.
         /// Index 0: Default local path to the PixARK world saves folder.
         /// Index 1: Default server path to the PixARK world saves folder.
@@ -279,9 +317,12 @@ namespace PixARK_Tools
         /// </summary>
         internal static readonly string[] Matriz_Rutas_PixARK = new string[]
         {
+            //string.Compare(Environment.UserName, "Jupisoft", true) == 0 ? Application.StartupPath + "\\Saves" : null, // Application save path for world testings.
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\Steam\\steamapps\\common\\PixARK\\ShooterGame\\Saved\\CubeSingles\\CubeWorld_Light", // Single player.
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\Steam\\steamapps\\common\\PixARK\\ShooterGame\\Saved\\Cube_LocalNetwork\\CubeWorld_Light", // LAN.
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\ShooterGame\\Saved\\CubeServers\\CubeWorld_Light\\CubeWorld", // Server.
             Environment.GetFolderPath(Environment.SpecialFolder.Windows)[0] + ":\\Games\\PixARK\\ShooterGame\\Saved\\CubeSingles\\CubeWorld_Light", // Alternate single player.
+            Environment.GetFolderPath(Environment.SpecialFolder.Windows)[0] + ":\\Games\\PixARK\\ShooterGame\\Saved\\Cube_LocalNetwork\\CubeWorld_Light", // Alternate LAN.
             // Feel free to add here any other valid path you known of to extend future support.
         };
 

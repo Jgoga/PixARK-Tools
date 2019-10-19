@@ -40,6 +40,55 @@ namespace PixARK_Tools
             /// </summary>
             internal static readonly Cambios[] Matriz_Cambios = new Cambios[]
             {
+                new Cambios(new DateTime(2019, 10, 18), "1.0.0.0", new string[]
+                {
+                    "Currently working on a code to detect structures based on the surface differences, it might take several days to finish it and it should be very slow and useful.",
+                    "Fixed a bug where couldn't save or copy the current map if any of the other maps was null or empty.",
+                    "Fixed a bug where biomes map without ores was fully transparent because it's alpha value wasn't properly set to 255.",
+                    "Fixed another bug where the ore types and percetages weren't counted if the map included the outside world borders.",
+                }),
+                new Cambios(new DateTime(2019, 10, 16), "1.0.0.0", new string[]
+                {
+                    "Tried to decrpyt the \"chunk_data\" values from the \"nx_chunks\" table, it seems to have 6 unknown bytes and then 256 bytes that should be height, the rest is unknown.",
+                    "Added a new byte explorer that shows the first 16 KB of any file, including SQLite objects, as rainbow bytes, to quickly see equal values.",
+                    "Added a new map in gray scale that shows the surface height and the existing chunks, including ruins as well as any exposed caves.",
+                    "Learned that the cheat to reveal the full world map doesn't generate all the chunks in a world, it still needs to be explored manually to fully see it's ruins map.",
+                    "Changed several options in the context menu, including adding several new map types.",
+                }),
+                new Cambios(new DateTime(2019, 10, 15), "1.0.0.0", new string[]
+                {
+                    "Added the class \"PixARK_Cheats\", which now contains all the known PixARK cheat codes, even to obtain all the game items.",
+                    "Added a new group box full of options to generate the desired cheat codes and copy them directly to the clipboard.",
+                    "Improved the context menu by removing some redundant options and added a few new ones.",
+                    "Added a full SQLite 3 data base explorer to investigate as read-only the \"terrain.db\" world files and see if they have other useful information like ruins locations.",
+                }),
+                new Cambios(new DateTime(2019, 10, 14), "1.0.0.0", new string[]
+                {
+                    "Added a debug function for Jupisoft to always save a full resolution world map with the seed, useful for testing lots of worlds and remember the best ones.",
+                    "Improved the biome balance calculation by always ignoring the biome 10 (Novice Grassland), since it only generates 9 small patches and not always visible.",
+                    "Divided the biomes in the legend into 6 categories based on it's difficulty and the ore biomes, they are no longer sorted by it's biome indexes.",
+                    "Added a new option to color in red the text of the biomes legend to quickly spot the ones missing in a world.",
+                    "Also added a blue color text if a biome is equal or bigger than 8 percent of the total biomes in a world, meaning it's of an ideal size or very big.",
+                    "Added a smarter drag and drop support by auto-detecting if the dropped folder has a file called \"terrain.db\" inside of it, meaning it should be a valid world.",
+                    "Fixed a bug that loaded 2 times the same world after doing a drag and drop if the world folder was considered valid.",
+                    "Added mouse click support also for the text labels in the biome legend.",
+                    "Added on the biomes group box text the percentages of all the biomes contained in each group box added together.",
+                }),
+                new Cambios(new DateTime(2019, 10, 13), "1.0.0.0", new string[]
+                {
+                    "Changed 2 access keys for the copy options in the context menu.",
+                    "Shrinked the legend picture boxes by 3 pixels on each direction to save more space and add later on more controls.",
+                    "Updated the Finisar SQLite code, although it's kinda obsolete and very old, might need a replacement.",
+                    "Tested several codes to replace the world biomes, and they worked but not on PixARK, only on the world terrain data base.",
+                }),
+                new Cambios(new DateTime(2019, 10, 12), "1.0.0.0", new string[]
+                {
+                    "Fixed another drag and drop bug that made the dopped world never load at the first try.",
+                    "Updated the application to fully support PixARK 1.67 (DLC Skyward) worlds.",
+                    "Added 2 new PixARK known world save path for LAN worlds.",
+                    "Fixed a bug where refreshing the worlds list kept deleted world folders.",
+                    "Now any found folder not listed in the worlds list is also included as a possibly found world.",
+                }),
                 new Cambios(new DateTime(2019, 10, 11), "1.0.0.0", new string[]
                 {
                     "Added a new status bar label to show the percentage of surface ore biomes.",

@@ -64,12 +64,20 @@ namespace PixARK_Tools
         /// details using only the main PictureBox, so it includes several functions to
         /// export this image with or without the world borders to see it completely.
         /// </summary>
-        internal Bitmap Imagen_Original = null;
+        internal Bitmap Imagen_Biomas_Original = null;
         /// <summary>
         /// "Copy" of the previous image, but without showing any ore biomes, this is the closest
         /// image to the one shown in game in PixARK.
         /// </summary>
-        internal Bitmap Imagen_Original_Simple = null;
+        internal Bitmap Imagen_Biomas_Original_Simple = null;
+        /// <summary>
+        /// Image that stores the original world height map, based on the found chunks.
+        /// </summary>
+        internal Bitmap Imagen_Altura_Original = null;
+        /// <summary>
+        /// Image that stores the original rainbow world height map, based on the found chunks.
+        /// </summary>
+        internal Bitmap Imagen_Arco_Iris_Original = null;
         /// <summary>
         /// Image used to store a shrinked copy of the world map, that is used to show it
         /// on the main PictureBox and also to get it's pixels and see over what biome is
@@ -80,8 +88,10 @@ namespace PixARK_Tools
         internal Dictionary<string, string> Diccionario_Mundos_Nombres = new Dictionary<string, string>();
         internal static bool Variable_Cargar_Automáticamente = true;
         internal static bool Variable_Ocultar_Bordes = true;
-        internal static bool Variable_Mostrar_Regla = true;
         internal static bool Variable_Mostrar_Minerales = true;
+        internal static bool Variable_Mostrar_Regla = true;
+        internal static bool Variable_Mostrar_Lista_Trucos = false;
+        internal static int Variable_Mostrar_Mapa = 0;
         internal PictureBox[] Matriz_Pictures = null;
         internal Label[] Matriz_Etiquetas = null;
         internal Color Color_ARGB_Bioma = Color.Empty;
@@ -107,14 +117,14 @@ namespace PixARK_Tools
                     Picture_Leyenda_9,
                     Picture_Leyenda_10,
                     Picture_Leyenda_11,
-                    Picture_Leyenda_12,
+                    null,
                     Picture_Leyenda_13,
                     Picture_Leyenda_14,
                     Picture_Leyenda_15,
                     Picture_Leyenda_16,
                     Picture_Leyenda_17,
                     Picture_Leyenda_18,
-                    Picture_Leyenda_19,
+                    null,
                     Picture_Leyenda_20,
                     Picture_Leyenda_21,
                     Picture_Leyenda_22,
@@ -134,14 +144,14 @@ namespace PixARK_Tools
                     Etiqueta_Leyenda_9,
                     Etiqueta_Leyenda_10,
                     Etiqueta_Leyenda_11,
-                    Etiqueta_Leyenda_12,
+                    null,
                     Etiqueta_Leyenda_13,
                     Etiqueta_Leyenda_14,
                     Etiqueta_Leyenda_15,
                     Etiqueta_Leyenda_16,
                     Etiqueta_Leyenda_17,
                     Etiqueta_Leyenda_18,
-                    Etiqueta_Leyenda_19,
+                    null,
                     Etiqueta_Leyenda_20,
                     Etiqueta_Leyenda_21,
                     Etiqueta_Leyenda_22,
@@ -149,18 +159,34 @@ namespace PixARK_Tools
                 };
                 for (int Índice = 0; Índice < 24; Índice++)
                 {
-                    if (Índice < Matriz_Etiquetas.Length &&
+                    if (Índice != 12 &&
+                        Índice != 19 &&
+                        Índice < Matriz_Etiquetas.Length &&
                         Índice < PixARK.Biomas.Matriz_Biomas.Length)
                     {
                         Matriz_Pictures[Índice].BackColor = PixARK.Biomas.Matriz_Biomas[Índice].Color;
-                        Matriz_Etiquetas[Índice].Text = PixARK.Biomas.Matriz_Biomas[Índice].Índice.ToString() + ": " + PixARK.Biomas.Matriz_Biomas[Índice].Nombre + " (" + PixARK.Biomas.Matriz_Biomas[Índice].Dificultad.ToString() + ")" + (PixARK.Biomas.Matriz_Biomas[Índice].Minerales != PixARK.Minerales.Unknown ? " (Ores: " + PixARK.Biomas.Matriz_Biomas[Índice].Minerales.ToString().Replace('_', ' ') + ")" : null) + ".";
+                        Matriz_Etiquetas[Índice].ForeColor = Color.Black;
+                        Matriz_Etiquetas[Índice].Text = PixARK.Biomas.Matriz_Biomas[Índice].Índice.ToString() + ": " + (string.Compare(PixARK.Biomas.Matriz_Biomas[Índice].Nombre, PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple, true) != 0 ? PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple + (!PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple.EndsWith("s") ? "'s " : "' ") : null) + PixARK.Biomas.Matriz_Biomas[Índice].Nombre + (PixARK.Biomas.Matriz_Biomas[Índice].Minerales != PixARK.Minerales.Unknown ? " (" + PixARK.Biomas.Matriz_Biomas[Índice].Minerales.ToString().Replace('_', ' ') + ")" : null) + ".";
                     }
                 }
                 CheckBox_Cargar_Automáticamente.Checked = Variable_Cargar_Automáticamente;
+                ListBox_Objeto.Items.Add("0: None");
+                if (PixARK_Cheats.Matriz_Objetos != null && PixARK_Cheats.Matriz_Objetos.Length > 0)
+                {
+                    for (int Índice_Objeto = 0; Índice_Objeto < PixARK_Cheats.Matriz_Objetos.Length; Índice_Objeto++)
+                    {
+                        ListBox_Objeto.Items.Add(Program.Traducir_Número(Índice_Objeto + 1) + ": " + PixARK_Cheats.Matriz_Objetos[Índice_Objeto]);
+                    }
+                    //ListBox_Objeto.Items.AddRange(PixARK_Cheats.Matriz_Objetos);
+                }
+                if (ListBox_Objeto.Items.Count >= 913) ListBox_Objeto.SelectedIndex = 913;
+                else ListBox_Objeto.SelectedIndex = 0;
+                if (ComboBox_Truco.Items.Count > 0) ComboBox_Truco.SelectedIndex = 0;
                 Menú_Contextual_Siempre_Visible.Checked = Variable_Siempre_Visible;
                 Menú_Contextual_Ocultar_Bordes.Checked = Variable_Ocultar_Bordes;
-                Menú_Contextual_Mostrar_Regla.Checked = Variable_Mostrar_Regla;
                 Menú_Contextual_Mostrar_Minerales.Checked = Variable_Mostrar_Minerales;
+                Menú_Contextual_Mostrar_Regla.Checked = Variable_Mostrar_Regla;
+                Menú_Contextual_Mostrar_Lista_Trucos.Checked = Variable_Mostrar_Lista_Trucos;
                 Barra_Estado_Etiqueta_Bioma.Image = Program.Crear_Imagen_Color_Fondo(Color.Gray);
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
@@ -245,41 +271,39 @@ namespace PixARK_Tools
                                 if (!string.IsNullOrEmpty(Ruta) && (Directory.Exists(Ruta) || File.Exists(Ruta)))
                                 {
                                     string Ruta_Base = Directory.Exists(Ruta) ? Ruta : Path.GetDirectoryName(Ruta);
-                                    bool Guid_Válido = false;
+                                    bool Mundo_Válido = false;
                                     try
                                     {
-                                        // I found out that the world folder names seem to be "Guid", so try to load it.
-                                        Guid Identificador = new Guid(Path.GetFileName(Ruta_Base));
-                                        Guid_Válido = true; // It should be a valid world folder (hopefully).
+                                        if (File.Exists(Ruta_Base + "\\terrain.db"))
+                                        {
+                                            Mundo_Válido = true; // It should be a valid world folder (hopefully).
+                                        }
+                                        else
+                                        {
+                                            // I found out that the world folder names seem to be "Guid", so try to load it.
+                                            Guid Identificador = new Guid(Path.GetFileName(Ruta_Base));
+                                            Mundo_Válido = true; // It should be a valid world folder (hopefully).
+                                        }
                                     }
-                                    catch { Guid_Válido = false; }
-                                    if (Guid_Válido) // It should be a valid world folder.
+                                    catch { Mundo_Válido = false; }
+                                    if (Mundo_Válido) // It should be a valid world folder.
                                     {
                                         // Avoid loading multiple worlds.
                                         bool Cargar_Automáticamente = CheckBox_Cargar_Automáticamente.Checked;
                                         CheckBox_Cargar_Automáticamente.Checked = false;
                                         string Ruta_PixARK = Path.GetDirectoryName(Ruta_Base);
                                         ComboBox_Ruta_PixARK.Text = Ruta_PixARK;
-                                        if (!ComboBox_Ruta_PixARK.Items.Contains(Ruta_PixARK))
-                                        {
-                                            ComboBox_Ruta_PixARK_SelectedIndexChanged(ComboBox_Ruta_PixARK, EventArgs.Empty);
-                                        }
-                                        CheckBox_Cargar_Automáticamente.Checked = Cargar_Automáticamente;
+                                        ComboBox_Ruta_PixARK_SelectedIndexChanged(ComboBox_Ruta_PixARK, EventArgs.Empty);
                                         string Ruta_Mundo = Ruta_Base;
                                         ComboBox_Mundo_PixARK.Text = Ruta_Mundo;
-                                        if (!ComboBox_Mundo_PixARK.Items.Contains(Ruta_Mundo))
-                                        {
-                                            ComboBox_Mundo_PixARK_SelectedIndexChanged(ComboBox_Mundo_PixARK, EventArgs.Empty);
-                                        }
+                                        CheckBox_Cargar_Automáticamente.Checked = Cargar_Automáticamente;
+                                        ComboBox_Mundo_PixARK_SelectedIndexChanged(ComboBox_Mundo_PixARK, EventArgs.Empty);
                                     }
                                     else
                                     {
                                         // Assume it's a folder with at least one world subfolder inside.
                                         ComboBox_Ruta_PixARK.Text = Ruta_Base;
-                                        if (!ComboBox_Ruta_PixARK.Items.Contains(Ruta_Base))
-                                        {
-                                            ComboBox_Ruta_PixARK_SelectedIndexChanged(ComboBox_Ruta_PixARK, EventArgs.Empty);
-                                        }
+                                        ComboBox_Ruta_PixARK_SelectedIndexChanged(ComboBox_Ruta_PixARK, EventArgs.Empty);
                                     }
                                     Ruta_Base = null;
                                     break;
@@ -300,7 +324,7 @@ namespace PixARK_Tools
             {
                 if (this.WindowState != FormWindowState.Minimized)
                 {
-                    Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                    Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
                 }
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
@@ -498,8 +522,10 @@ namespace PixARK_Tools
             {
                 ComboBox_Ruta_PixARK.Refresh();
                 Semilla = 0;
-                Imagen_Original = null;
-                Imagen_Original_Simple = null;
+                Imagen_Biomas_Original = null;
+                Imagen_Biomas_Original_Simple = null;
+                Imagen_Altura_Original = null;
+                Imagen_Arco_Iris_Original = null;
                 this.Text = Texto_Título + " - [Drag and drop any world save folder here to load it]";
                 ComboBox_Mundo_PixARK.Items.Clear();
                 ComboBox_Mundo_PixARK.Text = null;
@@ -560,8 +586,44 @@ namespace PixARK_Tools
                     {
                         foreach (KeyValuePair<string, string> Entrada in Lista_Mundos_Nombres)
                         {
-                            ComboBox_Mundo_PixARK.Items.Add(ComboBox_Ruta_PixARK.Text + "\\" + Entrada.Key);
+                            try
+                            {
+                                if (Directory.Exists(ComboBox_Ruta_PixARK.Text + "\\" + Entrada.Key))
+                                {
+                                    ComboBox_Mundo_PixARK.Items.Add(ComboBox_Ruta_PixARK.Text + "\\" + Entrada.Key);
+                                }
+                            }
+                            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; continue; }
                         }
+                        // Now add also any other existing folder not found in the world list.
+                        string[] Matriz_Rutas = Directory.GetDirectories(ComboBox_Ruta_PixARK.Text, "*", SearchOption.TopDirectoryOnly);
+                        if (Matriz_Rutas != null && Matriz_Rutas.Length > 0)
+                        {
+                            if (Matriz_Rutas.Length > 1) Array.Sort(Matriz_Rutas);
+                            foreach (string Ruta in Matriz_Rutas)
+                            {
+                                try
+                                {
+                                    string Nombre = Path.GetFileName(Ruta);
+                                    bool Repetido = false;
+                                    foreach (KeyValuePair<string, string> Entrada in Lista_Mundos_Nombres)
+                                    {
+                                        try
+                                        {
+                                            if (string.Compare(Entrada.Key, Nombre, true) == 0)
+                                            {
+                                                Repetido = true;
+                                                break;
+                                            }
+                                        }
+                                        catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; continue; }
+                                    }
+                                    if (!Repetido) ComboBox_Mundo_PixARK.Items.Add(Ruta);
+                                }
+                                catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; continue; }
+                            }
+                        }
+                        Matriz_Rutas = null;
                     }
                     else // Couldn't sort the worlds by their name.
                     {
@@ -571,10 +633,7 @@ namespace PixARK_Tools
                             if (Matriz_Rutas.Length > 1) Array.Sort(Matriz_Rutas);
                             foreach (string Ruta in Matriz_Rutas)
                             {
-                                try
-                                {
-                                    ComboBox_Mundo_PixARK.Items.Add(Ruta);
-                                }
+                                try { ComboBox_Mundo_PixARK.Items.Add(Ruta); }
                                 catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; continue; }
                             }
                         }
@@ -599,16 +658,27 @@ namespace PixARK_Tools
                 else
                 {
                     Semilla = 0;
-                    Imagen_Original = null;
-                    Imagen_Original_Simple = null;
+                    Imagen_Biomas_Original = null;
+                    Imagen_Biomas_Original_Simple = null;
+                    Imagen_Altura_Original = null;
+                    Imagen_Arco_Iris_Original = null;
                     this.Text = Texto_Título + " - [Drag and drop any world save folder here to load it]";
                     Establecer_Imagen_Picture(null, Color_ARGB_Bioma);
+                    Grupo_Biomas_Fáciles.Text = "Easy difficulty main biomes";
+                    Grupo_Biomas_Medios.Text = "Medium difficulty main biomes";
+                    Grupo_Biomas_Difíciles.Text = "Hard difficulty main biomes";
+                    Grupo_Recursos_Fáciles.Text = "Easy difficulty resources biomes";
+                    Grupo_Recursos_Medios.Text = "Medium difficulty resources biomes";
+                    Grupo_Recursos_Difíciles.Text = "Hard difficulty resources biomes";
                     for (int Índice = 0; Índice < 24; Índice++)
                     {
-                        if (Índice < Matriz_Etiquetas.Length &&
+                        if (Índice != 12 &&
+                            Índice != 19 &&
+                            Índice < Matriz_Etiquetas.Length &&
                             Índice < PixARK.Biomas.Matriz_Biomas.Length)
                         {
-                            Matriz_Etiquetas[Índice].Text = PixARK.Biomas.Matriz_Biomas[Índice].Índice.ToString() + ": " + PixARK.Biomas.Matriz_Biomas[Índice].Nombre + " (" + PixARK.Biomas.Matriz_Biomas[Índice].Dificultad.ToString() + ")" + (PixARK.Biomas.Matriz_Biomas[Índice].Minerales != PixARK.Minerales.Unknown ? " (Ores: " + PixARK.Biomas.Matriz_Biomas[Índice].Minerales.ToString().Replace('_', ' ') + ")" : null) + ".";
+                            Matriz_Etiquetas[Índice].ForeColor = Color.Black;
+                            Matriz_Etiquetas[Índice].Text = PixARK.Biomas.Matriz_Biomas[Índice].Índice.ToString() + ": " + (string.Compare(PixARK.Biomas.Matriz_Biomas[Índice].Nombre, PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple, true) != 0 ? PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple + (!PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple.EndsWith("s") ? "'s " : "' ") : null) + PixARK.Biomas.Matriz_Biomas[Índice].Nombre + (PixARK.Biomas.Matriz_Biomas[Índice].Minerales != PixARK.Minerales.Unknown ? " (" + PixARK.Biomas.Matriz_Biomas[Índice].Minerales.ToString().Replace('_', ' ') + ")" : null) + ".";
                         }
                     }
                     TextBox_Análisis.Text = null;
@@ -632,22 +702,56 @@ namespace PixARK_Tools
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
         }
 
+        private void Botón_Explorar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Ventana_Visor_Bases_Datos Ventana = new Ventana_Visor_Bases_Datos();
+                Ventana.Variable_Siempre_Visible = Variable_Siempre_Visible;
+                if (ComboBox_Mundo_PixARK.Items.Count > 0)
+                {
+                    foreach (string Ruta in ComboBox_Mundo_PixARK.Items)
+                    {
+                        Ventana.ComboBox_Ruta.Items.Add(Ruta + "\\terrain.db");
+                    }
+                }
+                if (Ventana.ShowDialog(this) == DialogResult.OK)
+                {
+                    // ...
+                }
+                Ventana.Dispose();
+                Ventana = null;
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
         private void Botón_Cargar_Click(object sender, EventArgs e)
         {
             try
             {
                 this.Cursor = Cursors.WaitCursor;
                 Semilla = 0;
-                Imagen_Original = null;
-                Imagen_Original_Simple = null;
+                Imagen_Biomas_Original = null;
+                Imagen_Biomas_Original_Simple = null;
+                Imagen_Altura_Original = null;
+                Imagen_Arco_Iris_Original = null;
                 this.Text = Texto_Título + " - [Drag and drop any world save folder here to load it]";
                 Establecer_Imagen_Picture(null, Color_ARGB_Bioma);
+                Grupo_Biomas_Fáciles.Text = "Easy difficulty main biomes";
+                Grupo_Biomas_Medios.Text = "Medium difficulty main biomes";
+                Grupo_Biomas_Difíciles.Text = "Hard difficulty main biomes";
+                Grupo_Recursos_Fáciles.Text = "Easy difficulty resources biomes";
+                Grupo_Recursos_Medios.Text = "Medium difficulty resources biomes";
+                Grupo_Recursos_Difíciles.Text = "Hard difficulty resources biomes";
                 for (int Índice = 0; Índice < 24; Índice++)
                 {
-                    if (Índice < Matriz_Etiquetas.Length &&
+                    if (Índice != 12 &&
+                        Índice != 19 &&
+                        Índice < Matriz_Etiquetas.Length &&
                         Índice < PixARK.Biomas.Matriz_Biomas.Length)
                     {
-                        Matriz_Etiquetas[Índice].Text = PixARK.Biomas.Matriz_Biomas[Índice].Índice.ToString() + ": " + PixARK.Biomas.Matriz_Biomas[Índice].Nombre + " (" + PixARK.Biomas.Matriz_Biomas[Índice].Dificultad.ToString() + ")" + (PixARK.Biomas.Matriz_Biomas[Índice].Minerales != PixARK.Minerales.Unknown ? " (Ores: " + PixARK.Biomas.Matriz_Biomas[Índice].Minerales.ToString().Replace('_', ' ') + ")" : null) + ".";
+                        Matriz_Etiquetas[Índice].ForeColor = Color.Black;
+                        Matriz_Etiquetas[Índice].Text = PixARK.Biomas.Matriz_Biomas[Índice].Índice.ToString() + ": " + (string.Compare(PixARK.Biomas.Matriz_Biomas[Índice].Nombre, PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple, true) != 0 ? PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple + (!PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple.EndsWith("s") ? "'s " : "' ") : null) + PixARK.Biomas.Matriz_Biomas[Índice].Nombre + (PixARK.Biomas.Matriz_Biomas[Índice].Minerales != PixARK.Minerales.Unknown ? " (" + PixARK.Biomas.Matriz_Biomas[Índice].Minerales.ToString().Replace('_', ' ') + ")" : null) + ".";
                     }
                 }
                 TextBox_Análisis.Text = null;
@@ -791,17 +895,23 @@ namespace PixARK_Tools
                         // this game is not like Minecraft, when you die, and if you log off, your grave with it's
                         // items gets lost forever, so watch out for that and also I found you can drink Petroleum
                         // as it was water in a desert, which was very strange since it refilled al my water.
-                        DataSet Set_Datos = new DataSet();
-                        Set_Datos.RemotingFormat = SerializationFormat.Binary;
                         string Texto_Conexión = "Data Source=" + Ruta_Terrain_DB + ";New=False;Version=3";
                         SQLiteConnection Conexión_SQL = new SQLiteConnection(Texto_Conexión);
                         Conexión_SQL.Open();
 
+                        // Get the final width and height of the world map.
+                        Ancho += PixARK.Borde_Mundo_Doble;
+                        Alto += PixARK.Borde_Mundo_Doble;
+                        int Total_Píxeles = Ancho * Alto;
+                        int Ancho_Mitad = Ancho / 2;
+                        int Alto_Mitad = Alto / 2;
+
+                        // Now try to read the biomes and resources world map.
                         string Texto_Comando = "Select * from " + PixARK.Texto_Clave_Mundo + ";";
-
-                        SQLiteDataAdapter Adaptador_SQL = new SQLiteDataAdapter(Texto_Comando, Conexión_SQL);
+                        SQLiteDataAdapter Adaptador_SQL = new SQLiteDataAdapter(Texto_Comando, Conexión_SQL); // Re-use the same connection.
+                        DataSet Set_Datos = new DataSet();
+                        Set_Datos.RemotingFormat = SerializationFormat.Binary;
                         Adaptador_SQL.Fill(Set_Datos, PixARK.Texto_Clave_Mundo);
-
                         // Code to extract the world chunks from the "terrain.db" file.
                         /*byte[] Matriz_Bytes = Set_Datos.Tables[0].Rows[1000]["chunk_data"] as byte[];
                         if (Matriz_Bytes != null && Matriz_Bytes.Length > 0)
@@ -809,422 +919,854 @@ namespace PixARK_Tools
                             File.WriteAllBytes(Application.StartupPath + "\\PixARK_Chunk_1000.bin", Matriz_Bytes);
                         }*/
                         // Code to extract the world map from the "terrain.db" file.
-                        byte[] Matriz_Bytes = Set_Datos.Tables[0].Rows[0]["data"] as byte[]; // This should be the map.
-                        if (Matriz_Bytes != null && Matriz_Bytes.Length > 0)
+                        byte[] Matriz_Bytes_Biomas = Set_Datos.Tables[0].Rows[0]["data"] as byte[]; // This should be the map.
+                        if (Matriz_Bytes_Biomas == null || Matriz_Bytes_Biomas.Length < Total_Píxeles)
                         {
-                            Ancho += PixARK.Borde_Mundo_Doble;
-                            Alto += PixARK.Borde_Mundo_Doble;
-                            int Total_Píxeles = Ancho * Alto;
-                            int Índice_Byte_Inicio = Math.Max(Matriz_Bytes.Length - Total_Píxeles, 0);
-                            // Always seems to be 16 bytes that are not biome indexes, what are they?
-                            if (string.Compare(Environment.UserName, "Jupisoft", true) == 0 &&
-                                Índice_Byte_Inicio != 16)
+                            // We failed to get the world biomes map, so make an empty one with deep ocean.
+                            Matriz_Bytes_Biomas = new byte[Total_Píxeles];
+                        }
+                        int Índice_Byte_Bioma_Inicio = Math.Max(Matriz_Bytes_Biomas.Length - Total_Píxeles, 0);
+                        // Close the SQL connection as soon as we get the world biomes byte array.
+                        Set_Datos.Dispose();
+                        Set_Datos = null;
+                        Adaptador_SQL.Dispose();
+                        Adaptador_SQL = null;
+
+                        try
+                        {
+                            // Now try to read any existing chunk of 16 x 16 blocks and draw it's height.
+                            Texto_Comando = "Select * from nx_chunks;";
+                            Adaptador_SQL = new SQLiteDataAdapter(Texto_Comando, Conexión_SQL);
+                            Set_Datos = new DataSet();
+                            Set_Datos.RemotingFormat = SerializationFormat.Binary;
+                            Adaptador_SQL.Fill(Set_Datos, "nx_chunks");
+
+                            if (Set_Datos.Tables[0] != null &&
+                                Set_Datos.Tables[0].Columns != null &&
+                                Set_Datos.Tables[0].Columns.Count > 0 &&
+                                //Set_Datos.Tables[0].Columns.Contains("chunk_data") &&
+                                Set_Datos.Tables[0].Columns.Contains("chunk_posi") &&
+                                Set_Datos.Tables[0].Columns.Contains("height_data") &&
+                                //Set_Datos.Tables[0].Columns.Contains("top_block") &&
+                                Set_Datos.Tables[0].Rows != null &&
+                                Set_Datos.Tables[0].Rows.Count > 0) // Valid table, columns and rows.
                             {
-                                MessageBox.Show(this, "Índice_Byte_Inicio = " + Índice_Byte_Inicio.ToString() + ".");
-                            }
-                            int[] Matriz_Biomas = new int[256]; // Use 256 to support future updates.
-                            List<byte> Lista_Biomas = new List<byte>();
-                            //byte Mínimo = byte.MaxValue;
-                            //byte Máximo = byte.MinValue;
-                            int Total_Biomas = 0; // Total of counted biomes, without the borders.
-                            int Total_Fácil = 0;
-                            int Total_Media = 0;
-                            int Total_Difícil = 0;
-                            int Total_Agua = 0;
-                            int Total_Minerales = 0;
-                            int Total_Cobre = 0;
-                            int Total_Hierro = 0;
-                            int Total_Hierro_Fácil = 0;
-                            int Total_Hierro_Medio = 0;
-                            int Total_Hierro_Difícil = 0;
-                            int Total_Plata = 0; // Always hard to get.
-                            if (Variable_Ocultar_Bordes)
-                            {
-                                // Count only the playable biome percentages, excluding the ones outside the border.
-                                for (int Y = 0, Índice_Byte = Índice_Byte_Inicio; Y < Alto; Y++)
+                                //int Índice_Columna_Chunk = Set_Datos.Tables[0].Columns.IndexOf("chunk_data");
+                                int Índice_Columna_Posición = Set_Datos.Tables[0].Columns.IndexOf("chunk_posi");
+                                int Índice_Columna_Altura = Set_Datos.Tables[0].Columns.IndexOf("height_data");
+                                //int Índice_Columna_Bloques = Set_Datos.Tables[0].Columns.IndexOf("top_block");
+                                Imagen_Altura_Original = new Bitmap(Ancho, Alto, PixelFormat.Format32bppArgb);
+                                BitmapData Bitmap_Data_Altura = Imagen_Altura_Original.LockBits(new Rectangle(0, 0, Ancho, Alto), ImageLockMode.ReadWrite, Imagen_Altura_Original.PixelFormat);
+                                byte[] Matriz_Bytes_ARGB_Altura = new byte[Math.Abs(Bitmap_Data_Altura.Stride) * Alto];
+                                Marshal.Copy(Bitmap_Data_Altura.Scan0, Matriz_Bytes_ARGB_Altura, 0, Matriz_Bytes_ARGB_Altura.Length);
+                                int Bytes_Aumento_Altura = Image.IsAlphaPixelFormat(Imagen_Altura_Original.PixelFormat) ? 4 : 3;
+                                int Bytes_Diferencia_Altura = Math.Abs(Bitmap_Data_Altura.Stride) - ((Ancho * Image.GetPixelFormatSize(Imagen_Altura_Original.PixelFormat)) / 8);
+                                int Bytes_Ancho_Altura = Math.Abs(Bitmap_Data_Altura.Stride);
+                                //List<ushort> Lista_ID_Bloques = new List<ushort>();
+                                List<byte> Lista_Bytes_Altura = new List<byte>();
+                                //long Altura_Media = 0L;
+                                //int Altura_Total = 0;
+                                byte[] Matriz_Bytes_ARGB_Arco_Iris = Matriz_Bytes_ARGB_Altura.Clone() as byte[];
+                                for (int Índice_Fila = 0; Índice_Fila < Set_Datos.Tables[0].Rows.Count; Índice_Fila++)
                                 {
-                                    for (int X = 0; X < Ancho; X++, Índice_Byte++)
+                                    string Texto_Posición = Set_Datos.Tables[0].Rows[Índice_Fila][Índice_Columna_Posición] as string;
+                                    if (!string.IsNullOrEmpty(Texto_Posición) &&
+                                        Texto_Posición.Contains(','))
                                     {
-                                        if (Índice_Byte < Matriz_Bytes.Length &&
-                                            X >= PixARK.Borde_Mundo &&
-                                            X < Ancho - PixARK.Borde_Mundo &&
-                                            Y >= PixARK.Borde_Mundo &&
-                                            Y < Alto - PixARK.Borde_Mundo)
+                                        string[] Matriz_Líneas = Texto_Posición.Replace("(", null).Replace(")", null).Replace(" ", null).Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                        if (Matriz_Líneas != null && Matriz_Líneas.Length >= 2)
                                         {
-                                            Matriz_Biomas[Matriz_Bytes[Índice_Byte]]++;
-                                            if (!Lista_Biomas.Contains(Matriz_Bytes[Índice_Byte])) Lista_Biomas.Add(Matriz_Bytes[Índice_Byte]);
-                                            Total_Biomas++;
-                                            if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Dificultad == PixARK.Dificultades.Easy) Total_Fácil++;
-                                            else if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Dificultad == PixARK.Dificultades.Medium) Total_Media++;
-                                            else if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Dificultad == PixARK.Dificultades.Hard) Total_Difícil++;
-
-                                            if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 0 ||
-                                                //PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 11 ||
-                                                PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 13) Total_Agua++;
-
-                                            if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 15 ||
-                                                PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 18)
+                                            // We got the chunk position in the world, that should have a
+                                            // range for a default world of 5.120 x 5.120 blocks of width /
+                                            // 16 = (320 / 2) = 160 = [-160 to +159] for both X and Y.
+                                            // So convert the chunk position to positive coordinates and
+                                            // to world block coordinates.
+                                            Point Posición = new Point((int.Parse(Matriz_Líneas[0]) * 16) + Ancho_Mitad, (int.Parse(Matriz_Líneas[1]) * 16) + Alto_Mitad);
+                                            // Try to get the chunk data, which might contain the changed blocks in that chunk by the player
+                                            // and perhaps also other things like grass or trees that have naturally grown there. Unconfirmed!
+                                            // The first 6 bytes might have either coordinates or length, maybe as 16 bit values.
+                                            // The next 256 bytes seem to be world height in a 16 x 16 format, decoded in deep ocean chunks.
+                                            // The array always seems to have at least 1 extra byte, so it doesn't fit between 2 or 4 bytes.
+                                            // It might store 2 or 3 coordinates for each block, either as byte, ushort or even int values.
+                                            // Although this should end up being very inneficient, so I think it might store a full 16 x 16
+                                            // "section" for each Y value and it might only add that "section" if a block in there was
+                                            // changed somehow, although this is only a theory for now, since I know nothing about the format.
+                                            //byte[] Matriz_Bytes_Chunk = Set_Datos.Tables[0].Rows[Índice_Fila][Índice_Columna_Chunk] as byte[];
+                                            // Get the chunk height data as an array of bytes, it should have 256 bytes.
+                                            // Where each byte means the world height ranges from 0 to 255.
+                                            byte[] Matriz_Bytes_Altura = Set_Datos.Tables[0].Rows[Índice_Fila][Índice_Columna_Altura] as byte[];
+                                            // Now get the byte array that might store the surface top block IDs.
+                                            //byte[] Matriz_Bytes_Bloques = Set_Datos.Tables[0].Rows[Índice_Fila][Índice_Columna_Bloques] as byte[];
+                                            if (Matriz_Bytes_Altura != null && Matriz_Bytes_Altura.Length >= 256/* &&
+                                            Matriz_Bytes_Bloques != null && Matriz_Bytes_Bloques.Length >= 512*/)
                                             {
-                                                Total_Minerales++;
-                                                Total_Cobre++;
-                                            }
+                                                for (int Índice_Y = 0, Índice_Byte_Altura = 0, Índice_Byte_Bloque = 0; Índice_Y < 16; Índice_Y++)
+                                                {
+                                                    for (int Índice_X = 0; Índice_X < 16; Índice_X++, Índice_Byte_Altura++, Índice_Byte_Bloque += 2)
+                                                    {
+                                                        // First try to get the top block ID, assume it uses 2 bytes per block.
+                                                        /*ushort ID_Bloque = BitConverter.ToUInt16(Matriz_Bytes_Bloques, Índice_Byte_Bloque);
+                                                        if (!Lista_ID_Bloques.Contains(ID_Bloque))
+                                                        {
+                                                            Lista_ID_Bloques.Add(ID_Bloque); // Why this always was zero on my testings... Unused?
+                                                        }*/
+                                                        // Use a gray color to fully show the height range where
+                                                        // darker colors means less height and brighter ones means
+                                                        // more hegiht. 95 might be the water height, so color it,
+                                                        // but only if on that spot it should be either deep ocean
+                                                        // or river biomes. This map can reveal ruins and other
+                                                        // useful things like exposed caves and mountains, and even
+                                                        // player built bases over the surface, etc.
+                                                        int Índice_ARGB_Altura = ((Posición.Y + Índice_Y) * Bytes_Ancho_Altura) + ((Posición.X + Índice_X) * Bytes_Aumento_Altura);
+                                                        //int Altura = Matriz_Bytes_Altura[Índice_Byte_Altura];
 
-                                            if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 17)
-                                            {
-                                                Total_Minerales++;
-                                                Total_Hierro++;
-                                                Total_Hierro_Fácil++;
-                                            }
+                                                        // Add all the unique heights found in a list for later "normalization".
+                                                        if (!Lista_Bytes_Altura.Contains(Matriz_Bytes_Altura[Índice_Byte_Altura]))
+                                                        {
+                                                            Lista_Bytes_Altura.Add(Matriz_Bytes_Altura[Índice_Byte_Altura]);
+                                                        }
+                                                        // Also add each found height to find the average global height.
+                                                        //Altura_Media += Matriz_Bytes_Altura[Índice_Byte_Altura];
+                                                        //Altura_Total++;
 
-                                            if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 14 ||
-                                                PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 16 ||
-                                                PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 21)
-                                            {
-                                                Total_Minerales++;
-                                                Total_Hierro++;
-                                                Total_Hierro_Medio++;
-                                            }
+                                                        // Store the height of each block in a pixel as gray scale.
+                                                        Matriz_Bytes_ARGB_Altura[Índice_ARGB_Altura + 3] = 255;
+                                                        Matriz_Bytes_ARGB_Altura[Índice_ARGB_Altura + 2] = Matriz_Bytes_Altura[Índice_Byte_Altura];
+                                                        Matriz_Bytes_ARGB_Altura[Índice_ARGB_Altura + 1] = Matriz_Bytes_Altura[Índice_Byte_Altura];
+                                                        Matriz_Bytes_ARGB_Altura[Índice_ARGB_Altura] = Matriz_Bytes_Altura[Índice_Byte_Altura];
 
-                                            if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 20 ||
-                                                PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 22)
-                                            {
-                                                Total_Minerales++;
-                                                Total_Hierro++;
-                                                Total_Hierro_Difícil++;
+                                                        Matriz_Bytes_ARGB_Arco_Iris[Índice_ARGB_Altura + 3] = 255;
+                                                        Matriz_Bytes_ARGB_Arco_Iris[Índice_ARGB_Altura + 2] = Matriz_Bytes_Altura[Índice_Byte_Altura];
+                                                        Matriz_Bytes_ARGB_Arco_Iris[Índice_ARGB_Altura + 1] = Matriz_Bytes_Altura[Índice_Byte_Altura];
+                                                        Matriz_Bytes_ARGB_Arco_Iris[Índice_ARGB_Altura] = Matriz_Bytes_Altura[Índice_Byte_Altura];
+                                                    }
+                                                }
                                             }
+                                            Matriz_Bytes_Altura = null;
+                                        }
+                                        Matriz_Líneas = null;
+                                    }
+                                }
+                                // Now once we have drawn the height of the found chunks as gray scale, convert to final colors.
+                                if (Lista_Bytes_Altura.Count > 0)
+                                {
+                                    //Altura_Media /= Altura_Total;
+                                    if (Lista_Bytes_Altura.Count > 1) Lista_Bytes_Altura.Sort();
+                                    // Now do a "normalization", first in gray scale and then to color.
+                                    // Use an array of 256 bytes (one for each possible bit combination).
+                                    // And simply calculate the values that were found before to "redirect"
+                                    // them into a "normalized" value. The rest of bytes are to keep in sync.
+                                    byte[] Matriz_Bytes_Normalización_Altura = new byte[256];
+                                    byte[] Matriz_Bytes_Normalización_Arco_Iris = new byte[256];
+                                    for (int Índice = 0; Índice < Lista_Bytes_Altura.Count; Índice++)
+                                    {
+                                        byte Altura = Lista_Bytes_Altura[Índice];
+                                        int Altura_Normalizada = ((Índice + 1) * 255) / Lista_Bytes_Altura.Count;
+                                        if (Altura_Normalizada < 0) Altura_Normalizada = 0;
+                                        else if (Altura_Normalizada > 255) Altura_Normalizada = 255;
+                                        Matriz_Bytes_Normalización_Altura[Lista_Bytes_Altura[Índice]] = (byte)Altura_Normalizada;
+                                        Matriz_Bytes_Normalización_Arco_Iris[Lista_Bytes_Altura[Índice]] = (byte)Índice;
+                                    }
+                                    Imagen_Arco_Iris_Original = new Bitmap(Ancho, Alto, PixelFormat.Format32bppArgb);
+                                    BitmapData Bitmap_Data_Arco_Iris = Imagen_Arco_Iris_Original.LockBits(new Rectangle(0, 0, Ancho, Alto), ImageLockMode.WriteOnly, Imagen_Arco_Iris_Original.PixelFormat);
+                                    //byte[] Matriz_Bytes_ARGB_Arco_Iris = Matriz_Bytes_ARGB_Altura.Clone() as byte[];
+                                    // Now just apply the new "normalization" array to the main byte array with the RGB pixels.
+                                    /*long Altura_Media = 0L;
+                                    int Altura_Total = 0;
+                                    for (int Y = 0, Índice = 0, Índice_Byte_Bioma = Índice_Byte_Bioma_Inicio; Y < Alto; Y++, Índice += Bytes_Diferencia_Altura)
+                                    {
+                                        for (int X = 0; X < Ancho; X++, Índice += Bytes_Aumento_Altura, Índice_Byte_Bioma++)
+                                        {
+                                            Altura_Media += Matriz_Bytes_Normalización_Altura[Matriz_Bytes_ARGB_Altura[Índice]];
+                                            Altura_Total++;
+                                        }
+                                    }*/
+                                    for (int Y = 0, Índice = 0, Índice_Byte_Bioma = Índice_Byte_Bioma_Inicio; Y < Alto; Y++, Índice += Bytes_Diferencia_Altura)
+                                    {
+                                        for (int X = 0; X < Ancho; X++, Índice += Bytes_Aumento_Altura, Índice_Byte_Bioma++)
+                                        {
+                                            if (Matriz_Bytes_ARGB_Altura[Índice + 3] > 0)
+                                            {
+                                                /*Matriz_Bytes_ARGB_Altura[Índice + 2] = Matriz_Bytes_Normalización_Altura[Matriz_Bytes_ARGB_Altura[Índice]];
+                                                Matriz_Bytes_ARGB_Altura[Índice + 1] = Matriz_Bytes_Normalización_Altura[Matriz_Bytes_ARGB_Altura[Índice]];
+                                                Matriz_Bytes_ARGB_Altura[Índice] = Matriz_Bytes_Normalización_Altura[Matriz_Bytes_ARGB_Altura[Índice]];
+                                                */
+                                                Color Color_Arco_Iris = Program.Matriz_Colores_Arco_Iris_16[Matriz_Bytes_ARGB_Altura[Índice]];
+                                                Matriz_Bytes_ARGB_Altura[Índice + 2] = Color_Arco_Iris.R;
+                                                Matriz_Bytes_ARGB_Altura[Índice + 1] = Color_Arco_Iris.G;
+                                                Matriz_Bytes_ARGB_Altura[Índice] = Color_Arco_Iris.B;
 
-                                            if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 23)
-                                            {
-                                                Total_Minerales++;
-                                                Total_Plata++;
+                                                //Matriz_Bytes_ARGB_Altura[Índice + 2] = Program.Matriz_Colores_Termografía_256[255 - Matriz_Bytes_ARGB_Altura[Índice + 2]].R;
+                                                //Matriz_Bytes_ARGB_Altura[Índice + 1] = Program.Matriz_Colores_Termografía_256[255 - Matriz_Bytes_ARGB_Altura[Índice + 1]].G;
+                                                //Matriz_Bytes_ARGB_Altura[Índice] = Program.Matriz_Colores_Termografía_256[255 - Matriz_Bytes_ARGB_Altura[Índice]].B;
+
+                                                //Matriz_Bytes_ARGB_Altura[Índice + 2] = Program.Matriz_Colores_Arco_Iris_256[255 - Matriz_Bytes_ARGB_Altura[Índice + 2]].R;
+                                                //Matriz_Bytes_ARGB_Altura[Índice + 1] = Program.Matriz_Colores_Arco_Iris_256[255 - Matriz_Bytes_ARGB_Altura[Índice + 1]].G;
+                                                //Matriz_Bytes_ARGB_Altura[Índice] = Program.Matriz_Colores_Arco_Iris_256[255 - Matriz_Bytes_ARGB_Altura[Índice]].B;
+
+                                                /*Color Color_Arco_Iris = Program.Matriz_Colores_Arco_Iris_16[Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]]];
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 2] = Color_Arco_Iris.R;
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 1] = Color_Arco_Iris.G;
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice] = Color_Arco_Iris.B;*/
+
+                                                /*int Rojo = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte_Bioma]].Color.R;
+                                                int Verde = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte_Bioma]].Color.G;
+                                                int Azul = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte_Bioma]].Color.B;
+
+                                                //if (Matriz_Bytes_ARGB_Arco_Iris[Índice] != 95)
+                                                {
+                                                    if (Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]] < Lista_Bytes_Altura.Count / 2)
+                                                    {
+                                                        Rojo -= (Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]] * 32) / (Lista_Bytes_Altura.Count - 1);
+                                                        Verde -= (Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]] * 32) / (Lista_Bytes_Altura.Count - 1);
+                                                        Azul -= (Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]] * 32) / (Lista_Bytes_Altura.Count - 1);
+                                                    }
+                                                    else
+                                                    {
+                                                        Rojo += 32 - ((Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]] * 32) / (Lista_Bytes_Altura.Count - 1));
+                                                        Verde += 32 - ((Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]] * 32) / (Lista_Bytes_Altura.Count - 1));
+                                                        Azul += 32 - ((Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]] * 32) / (Lista_Bytes_Altura.Count - 1));
+                                                    }
+                                                }
+
+                                                if (Rojo < 0) Rojo = 0;
+                                                else if (Rojo > 255) Rojo = 255;
+                                                if (Verde < 0) Verde = 0;
+                                                else if (Verde > 255) Verde = 255;
+                                                if (Azul < 0) Azul = 0;
+                                                else if (Azul > 255) Azul = 255;
+
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 2] = (byte)Rojo;
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 1] = (byte)Verde;
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice] = (byte)Azul;*/
+
+                                                /*Color Color_Arco_Iris = Program.Obtener_Color_Puro_1530(1529 - ((Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]] * 1529) / Lista_Bytes_Altura.Count));
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 2] = Color_Arco_Iris.R;
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 1] = Color_Arco_Iris.G;
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice] = Color_Arco_Iris.B;
+                                                */
+                                                /*Matriz_Bytes_ARGB_Arco_Iris[Índice + 2] = Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]];
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 1] = Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]];
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice] = Matriz_Bytes_Normalización_Arco_Iris[Matriz_Bytes_ARGB_Arco_Iris[Índice]];
+
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 2] = Program.Matriz_Colores_Termografía_256[Matriz_Bytes_ARGB_Arco_Iris[Índice]].R;
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice + 1] = Program.Matriz_Colores_Termografía_256[Matriz_Bytes_ARGB_Arco_Iris[Índice]].G;
+                                                Matriz_Bytes_ARGB_Arco_Iris[Índice] = Program.Matriz_Colores_Termografía_256[Matriz_Bytes_ARGB_Arco_Iris[Índice]].B;
+                                                */
+                                                //Matriz_Bytes_ARGB_Arco_Iris[Índice + 2] = Program.Matriz_Colores_Arco_Iris_256[255 - Matriz_Bytes_ARGB_Arco_Iris[Índice]].R;
+                                                //Matriz_Bytes_ARGB_Arco_Iris[Índice + 1] = Program.Matriz_Colores_Arco_Iris_256[255 - Matriz_Bytes_ARGB_Arco_Iris[Índice]].G;
+                                                //Matriz_Bytes_ARGB_Arco_Iris[Índice] = Program.Matriz_Colores_Arco_Iris_256[255 - Matriz_Bytes_ARGB_Arco_Iris[Índice]].B;
                                             }
+                                        }
+                                    }
+                                    Marshal.Copy(Matriz_Bytes_ARGB_Arco_Iris, 0, Bitmap_Data_Arco_Iris.Scan0, Matriz_Bytes_ARGB_Arco_Iris.Length);
+                                    Imagen_Arco_Iris_Original.UnlockBits(Bitmap_Data_Arco_Iris);
+                                    Bitmap_Data_Arco_Iris = null;
+                                    Matriz_Bytes_ARGB_Arco_Iris = null;
+                                }
+                                Marshal.Copy(Matriz_Bytes_ARGB_Altura, 0, Bitmap_Data_Altura.Scan0, Matriz_Bytes_ARGB_Altura.Length);
+                                Imagen_Altura_Original.UnlockBits(Bitmap_Data_Altura);
+                                Bitmap_Data_Altura = null;
+                                Matriz_Bytes_ARGB_Altura = null;
+                                /*if (Lista_ID_Bloques.Count > 0)
+                                {
+                                    if (Lista_ID_Bloques.Count > 1) Lista_ID_Bloques.Sort();
+                                    Clipboard.SetText(Program.Traducir_Lista_Variables(Lista_ID_Bloques));
+                                }*/
+                            }
+                            Set_Datos.Dispose();
+                            Set_Datos = null;
+                            Adaptador_SQL.Dispose();
+                            Adaptador_SQL = null;
+                        }
+                        catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+                        Conexión_SQL.Close();
+                        Conexión_SQL.Dispose();
+                        Conexión_SQL = null;
+
+                        // Code to replace by brute force the biomes in the SQL data base.
+                        // Result: it worked without corrupting the file but PixARK replaced
+                        // the file each time it loaded the world, and when kept as read-only
+                        // PixARK didn't change it, but the world loaded as always, so it seems
+                        // to generate the biome map each time and keeps it into memory, so I
+                        // ignore why it exports this file with the biomes... well at least it's
+                        // useful to this application.
+                        /*bool Forzar_Bioma_Único = false; // false; // true;
+                        if (Forzar_Bioma_Único)
+                        {
+                            FileStream Lector = new FileStream(Ruta_Terrain_DB, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                            byte[] Matriz_Bytes_Completa = new byte[Lector.Length];
+                            int Longitud = Lector.Read(Matriz_Bytes_Completa, 0, Matriz_Bytes_Completa.Length);
+                            List<Point> Lista_Índices_Tamaños = new List<Point>();
+                            List<byte> Lista_Bytes = new List<byte>(Matriz_Bytes);
+                            //Lista_Índices_Tamaños.Add(new Point(15297, 1083)); // Start.
+                            for (int Índice_Byte = 0; Índice_Byte < Matriz_Bytes_Completa.Length - Lista_Bytes.Count; Índice_Byte++)
+                            {
+                                bool Encontrado = true;
+                                int Escribir = Matriz_Bytes.Length;
+                                for (int Índice = 0; Índice < Lista_Bytes.Count; Índice++)
+                                {
+                                    //break;
+                                    if (Matriz_Bytes_Completa[Índice_Byte + Índice] != Lista_Bytes[Índice])
+                                    {
+                                        if (Índice >= 1000) // 1083.
+                                        {
+                                            //Encontrado = true;
+                                            //Escribir = Índice;
+                                            Lista_Índices_Tamaños.Add(new Point(Índice_Byte, Índice));
+                                            Lista_Bytes.RemoveRange(0, Índice);
+                                            //Índice_Global += Índice;
+                                            Índice_Byte += Índice - 1;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            Encontrado = false;
+                                            break;
+                                        }
+                                    }
+                                    //else Índice_Byte++;
+                                }
+                            }
+                            if (Lista_Índices_Tamaños.Count > 0)
+                            {
+                                int Total = 0;
+                                for (int j = 0; j < Lista_Índices_Tamaños.Count; j++)
+                                {
+                                    Total += Lista_Índices_Tamaños[j].Y;
+                                }
+                                ;
+                                for (int j = 0; j < Lista_Índices_Tamaños.Count; j++)
+                                {
+                                    byte[] q = new byte[Math.Min(Lista_Índices_Tamaños[j].Y, 4000)]; // 1083.
+                                    for (int k = (j != 0 ? 0 : 16); k < q.Length; k++)
+                                    {
+                                        q[k] = (byte)10; // Novice Grassland.
+                                        //q[k] = (byte)Program.Rand.Next(0, 12);
+                                    }
+                                    Lector.Seek(Lista_Índices_Tamaños[j].X, SeekOrigin.Begin);
+                                    Lector.Write(q, 0, q.Length);
+                                }
+                            }
+                            Lector.Close();
+                            Lector.Dispose();
+                            Lector = null;
+                        }*/
+                        /*// Try to change the whole world biomes into a single one.
+                        // Results: only errors...
+                        for (int i = Índice_Byte_Inicio; i < Matriz_Bytes.Length; i++)
+                        {
+                            Matriz_Bytes[i] = 10; // Novice Grassland.
+                        }
+                        Set_Datos.Tables[0].Rows[0]["data"] = Matriz_Bytes;
+                        //Set_Datos.Tables[0].Rows[0].AcceptChanges();
+                        //Set_Datos.Tables[0].AcceptChanges();
+                        // MessageBox.Show(this, Set_Datos.HasChanges().ToString()); // True.
+                        Adaptador_SQL.UpdateCommand = new SQLiteCommand("Insert * from " + PixARK.Texto_Clave_Mundo + ";", Conexión_SQL);
+                        Adaptador_SQL.Update(Set_Datos, PixARK.Texto_Clave_Mundo);
+                        //Set_Datos.AcceptChanges();
+                        //Adaptador_SQL.Update(Set_Datos);*/
+
+                        // Always seems to be 16 bytes that are not biome indexes, what are they?
+                        if (Índice_Byte_Bioma_Inicio != 16 &&
+                            string.Compare(Environment.UserName, "Jupisoft", true) == 0)
+                        {
+                            MessageBox.Show(this, "Índice_Byte_Inicio = " + Índice_Byte_Bioma_Inicio.ToString() + ".", Program.Texto_Título_Versión, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        int[] Matriz_Biomas = new int[256]; // Use 256 to support future updates.
+                        List<byte> Lista_Biomas = new List<byte>();
+                        //byte Mínimo = byte.MaxValue;
+                        //byte Máximo = byte.MinValue;
+                        int Total_Biomas = 0; // Total of counted biomes, without the borders.
+                        int Total_Fácil = 0;
+                        int Total_Media = 0;
+                        int Total_Difícil = 0;
+                        int Total_Agua = 0;
+                        int Total_Minerales = 0;
+                        int Total_Cobre = 0;
+                        int Total_Hierro = 0;
+                        int Total_Hierro_Fácil = 0;
+                        int Total_Hierro_Medio = 0;
+                        int Total_Hierro_Difícil = 0;
+                        int Total_Plata = 0; // Always hard to get.
+                        if (Variable_Ocultar_Bordes)
+                        {
+                            // Count only the playable biome percentages, excluding the ones outside the border.
+                            for (int Y = 0, Índice_Byte = Índice_Byte_Bioma_Inicio; Y < Alto; Y++)
+                            {
+                                for (int X = 0; X < Ancho; X++, Índice_Byte++)
+                                {
+                                    if (Índice_Byte < Matriz_Bytes_Biomas.Length &&
+                                        X >= PixARK.Borde_Mundo &&
+                                        X < Ancho - PixARK.Borde_Mundo &&
+                                        Y >= PixARK.Borde_Mundo &&
+                                        Y < Alto - PixARK.Borde_Mundo)
+                                    {
+                                        Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]]++;
+                                        if (!Lista_Biomas.Contains(Matriz_Bytes_Biomas[Índice_Byte])) Lista_Biomas.Add(Matriz_Bytes_Biomas[Índice_Byte]);
+                                        Total_Biomas++;
+                                        if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Dificultad == PixARK.Dificultades.Easy) Total_Fácil++;
+                                        else if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Dificultad == PixARK.Dificultades.Medium) Total_Media++;
+                                        else if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Dificultad == PixARK.Dificultades.Hard) Total_Difícil++;
+
+                                        if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 0 ||
+                                            //PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 11 ||
+                                            PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 13) Total_Agua++;
+
+                                        if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 15 ||
+                                            PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 18)
+                                        {
+                                            Total_Minerales++;
+                                            Total_Cobre++;
+                                        }
+
+                                        if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 17)
+                                        {
+                                            Total_Minerales++;
+                                            Total_Hierro++;
+                                            Total_Hierro_Fácil++;
+                                        }
+
+                                        if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 14 ||
+                                            PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 16 ||
+                                            PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 21)
+                                        {
+                                            Total_Minerales++;
+                                            Total_Hierro++;
+                                            Total_Hierro_Medio++;
+                                        }
+
+                                        if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 20 ||
+                                            PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 22)
+                                        {
+                                            Total_Minerales++;
+                                            Total_Hierro++;
+                                            Total_Hierro_Difícil++;
+                                        }
+
+                                        if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 23)
+                                        {
+                                            Total_Minerales++;
+                                            Total_Plata++;
                                         }
                                     }
                                 }
                             }
-                            else
-                            {
-                                // Count all biome percentages, even the ones outside the world border.
-                                for (int Índice_Byte = Índice_Byte_Inicio; Índice_Byte < Total_Píxeles; Índice_Byte++)
-                                {
-                                    if (Índice_Byte < Matriz_Bytes.Length)
-                                    {
-                                        //byte Valor = Matriz_Bytes[Índice_Byte];
-                                        //if (Valor < Mínimo) Mínimo = Valor;
-                                        //if (Valor > Máximo) Máximo = Valor;
-                                        Matriz_Biomas[Matriz_Bytes[Índice_Byte]]++;
-                                        if (!Lista_Biomas.Contains(Matriz_Bytes[Índice_Byte])) Lista_Biomas.Add(Matriz_Bytes[Índice_Byte]);
-                                        if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Dificultad == PixARK.Dificultades.Easy) Total_Fácil++;
-                                        else if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Dificultad == PixARK.Dificultades.Medium) Total_Media++;
-                                        else if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Dificultad == PixARK.Dificultades.Hard) Total_Difícil++;
-                                    }
-                                }
-                                Total_Biomas = Total_Píxeles; // Use all the biomes, even the ones unreachable.
-                            }
-                            for (int Índice = 0; Índice < 24; Índice++)
-                            {
-                                if (Índice < Matriz_Etiquetas.Length &&
-                                    Índice < PixARK.Biomas.Matriz_Biomas.Length)
-                                {
-                                    Matriz_Etiquetas[Índice].Text = PixARK.Biomas.Matriz_Biomas[Índice].Índice.ToString() + ": " + PixARK.Biomas.Matriz_Biomas[Índice].Nombre + " (" + PixARK.Biomas.Matriz_Biomas[Índice].Dificultad.ToString() + ")" + (PixARK.Biomas.Matriz_Biomas[Índice].Minerales != PixARK.Minerales.Unknown ? " (Ores: " + PixARK.Biomas.Matriz_Biomas[Índice].Minerales.ToString().Replace('_', ' ') + ")" : null) + " [" + Program.Traducir_Número_Decimales_Redondear(((double)Matriz_Biomas[Índice] * 100d) / (double)Total_Biomas, 4) + " %].";
-                                }
-                            }
-
-                            // Find the more and less common biomes.
-                            int Mínimo_Índice = -1;
-                            int Mínimo_Total = int.MaxValue;
-                            int Mínimo_Cero_Índice = -1;
-                            int Mínimo_Cero_Total = int.MaxValue;
-                            int Máximo_Índice = -1;
-                            int Máximo_Total = int.MinValue;
-                            for (int Índice = 0; Índice < PixARK.Biomas.Matriz_Biomas.Length; Índice++)
-                            {
-                                if (!PixARK.Biomas.Matriz_Biomas[Índice].Bioma_Minerales)
-                                {
-                                    if (Matriz_Biomas[Índice] < Mínimo_Total) // Minimum biome found.
-                                    {
-                                        Mínimo_Índice = Índice;
-                                        Mínimo_Total = Matriz_Biomas[Índice];
-                                    }
-                                    if (Matriz_Biomas[Índice] > 0 &&
-                                        Matriz_Biomas[Índice] < Mínimo_Cero_Total) // Minimum existing biome found.
-                                    {
-                                        Mínimo_Cero_Índice = Índice;
-                                        Mínimo_Cero_Total = Matriz_Biomas[Índice];
-                                    }
-                                    if (Matriz_Biomas[Índice] > Máximo_Total) // Maximum biome found.
-                                    {
-                                        Máximo_Índice = Índice;
-                                        Máximo_Total = Matriz_Biomas[Índice];
-                                    }
-                                }
-                            }
-                            // Exclude the currently non existing biomes from the difference.
-                            int Diferencia_Máximo_Mínimo = Máximo_Total - Mínimo_Cero_Total;
-
-                            int[] Matriz_Porcentajes = new int[101]; // Array with biome percentages (0 to 100).
-                            for (int Índice_Porcentaje = 0; Índice_Porcentaje <= 100; Índice_Porcentaje++)
-                            {
-                                Matriz_Porcentajes[Índice_Porcentaje] = (int)Math.Round(((double)Índice_Porcentaje * (double)Total_Biomas) / 100d, MidpointRounding.AwayFromZero);
-                            }
-
-                            // Now make some kind of world analysis like the ones on the PixARK world maps wiki.
-                            string Texto_Análisis = "The seed " + Program.Traducir_Número(Semilla) + " has ";
-
-                            // Add the biome count.
-                            if (Lista_Biomas.Count >= 22) Texto_Análisis += "all biomes, ";
-                            else if (Lista_Biomas.Count >= 20) Texto_Análisis += "almost all biomes, ";
-                            else if (Lista_Biomas.Count >= 18) Texto_Análisis += "several biomes missing, ";
-                            else if (Lista_Biomas.Count >= 16) Texto_Análisis += "lots of biomes missing, ";
-                            else Texto_Análisis += "too many biomes missing, ";
-
-                            if (Diferencia_Máximo_Mínimo < Matriz_Porcentajes[10])
-                            {
-                                Texto_Análisis += "perfectly balanced, ";
-                            }
-                            else if (Diferencia_Máximo_Mínimo < Matriz_Porcentajes[20])
-                            {
-                                Texto_Análisis += "well balanced, ";
-                            }
-                            else if (Diferencia_Máximo_Mínimo >= Matriz_Porcentajes[30])
-                            {
-                                Texto_Análisis += "badly balanced, ";
-                            }
-
-                            // Add the more common biome in the world.
-                            if (Máximo_Total >= Matriz_Porcentajes[25])
-                            {
-                                Texto_Análisis += "with mostly " + PixARK.Biomas.Matriz_Biomas[Máximo_Índice].Nombre.ToLowerInvariant() + " ";
-                            }
-                            else
-                            {
-                                Texto_Análisis += "with lots of " + PixARK.Biomas.Matriz_Biomas[Máximo_Índice].Nombre.ToLowerInvariant() + " ";
-                            }
-
-                            // Add the less common biomes in the world.
-                            if (Mínimo_Total > 0)
-                            {
-                                Texto_Análisis += "and very few " + PixARK.Biomas.Matriz_Biomas[Mínimo_Índice].Nombre.ToLowerInvariant() + ", ";
-                            }
-                            else
-                            {
-                                List<string> Lista_Biomas_Inexistentes = new List<string>();
-                                for (int Índice = 0; Índice < 14/*PixARK.Biomas.Matriz_Biomas.Length*/; Índice++)
-                                {
-                                    if (Índice != 12 &&
-                                        Índice != 19 &&
-                                        Matriz_Biomas[Índice] <= 0)
-                                    {
-                                        Lista_Biomas_Inexistentes.Add(PixARK.Biomas.Matriz_Biomas[Índice].Nombre.ToLowerInvariant());
-                                    }
-                                }
-                                if (Lista_Biomas_Inexistentes.Count > 0)
-                                {
-                                    // More than one biome might be missing, so sort and show all the missing names.
-                                    if (Lista_Biomas_Inexistentes.Count > 1) Lista_Biomas_Inexistentes.Sort();
-                                    string Texto_Biomas_Inexistentes = null;
-                                    for (int Índice = 0; Índice < Lista_Biomas_Inexistentes.Count; Índice++)
-                                    {
-                                        Texto_Biomas_Inexistentes += Lista_Biomas_Inexistentes[Índice] + (Índice != Lista_Biomas_Inexistentes.Count - 2 ? ", " : " and ");
-                                    }
-                                    Texto_Análisis += "and nothing of " + Texto_Biomas_Inexistentes;
-                                }
-                                else // This should never happen.
-                                {
-                                    Texto_Análisis += "and nothing of " + PixARK.Biomas.Matriz_Biomas[Mínimo_Índice].Nombre.ToLowerInvariant() + ", ";
-                                }
-                            }
-
-                            // Add the biomes difficulty.
-                            byte Recomendado = 0; // 1 for very novices, 2 for novices, 3 for experts and 4 for very experts.
-                            if (Total_Difícil >= Total_Media * 2 && Total_Difícil >= Total_Fácil * 2)
-                            {
-                                Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's a very hard biomes map" : "it's a very hard biomes map";
-                                if (Total_Media < Matriz_Porcentajes[20]) Texto_Análisis += " with very few medium biomes";
-                                else if (Total_Fácil < Matriz_Porcentajes[20])
-                                {
-                                    Texto_Análisis += " with very few easy biomes";
-                                    Recomendado = 4;
-                                }
-                            }
-                            else if (Total_Media >= Total_Difícil * 2 && Total_Media >= Total_Fácil * 2)
-                            {
-                                Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's a very medium biomes map" : "it's a very medium biomes map";
-                                if (Total_Difícil < Matriz_Porcentajes[20]) Texto_Análisis += " with very few hard biomes";
-                                else if (Total_Fácil < Matriz_Porcentajes[20]) Texto_Análisis += " with very few easy biomes";
-                            }
-                            else if (Total_Fácil >= Total_Difícil * 2 && Total_Fácil >= Total_Media * 2)
-                            {
-                                Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's a very easy biomes map" : "it's a very easy biomes map";
-                                if (Total_Difícil < Matriz_Porcentajes[20])
-                                {
-                                    Texto_Análisis += " with very few hard biomes";
-                                    Recomendado = 1;
-                                }
-                                else if (Total_Media < Matriz_Porcentajes[20]) Texto_Análisis += " with very few medium biomes";
-                            }
-                            else if (Total_Difícil >= Total_Media && Total_Difícil >= Total_Fácil)
-                            {
-                                Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's mostly a hard biomes map" : "it's mostly a hard biomes map";
-                                if (Total_Media < Matriz_Porcentajes[20]) Texto_Análisis += " with very few medium biomes";
-                                else if (Total_Fácil < Matriz_Porcentajes[20])
-                                {
-                                    Texto_Análisis += " with very few easy biomes";
-                                    Recomendado = 3;
-                                }
-                            }
-                            else if (Total_Media >= Total_Difícil && Total_Media >= Total_Fácil)
-                            {
-                                Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's mostly a medium biomes map" : "it's mostly a medium biomes map";
-                                if (Total_Difícil < Matriz_Porcentajes[20]) Texto_Análisis += " with very few hard biomes";
-                                else if (Total_Fácil < Matriz_Porcentajes[20]) Texto_Análisis += " with very few easy biomes";
-                            }
-                            else if (Total_Fácil >= Total_Difícil && Total_Fácil >= Total_Media)
-                            {
-                                Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's mostly an easy biomes map" : "it's mostly an easy biomes map";
-                                if (Total_Difícil < Matriz_Porcentajes[20])
-                                {
-                                    Texto_Análisis += " with very few hard biomes";
-                                    Recomendado = 2;
-                                }
-                                else if (Total_Media < Matriz_Porcentajes[20]) Texto_Análisis += " with very few medium biomes";
-                            }
-
-                            // Add the water to see if it's useful for using boats.
-                            if (Total_Agua >= Matriz_Porcentajes[25])
-                            {
-                                Texto_Análisis += ", perfect to navigate using boats";
-                            }
-                            else if (Total_Agua >= Matriz_Porcentajes[20])
-                            {
-                                Texto_Análisis += ", useful to navigate using boats";
-                            }
-                            else if (Total_Agua <= 0) // Dry world.
-                            {
-                                Texto_Análisis += ", doesn't have any water to navigate";
-                            }
-                            else if (Total_Agua <= Matriz_Porcentajes[5])
-                            {
-                                Texto_Análisis += ", doesn't have enough water to navigate";
-                            }
-                            else if (Total_Agua <= Matriz_Porcentajes[10])
-                            {
-                                Texto_Análisis += ", doesn't have much water to navigate";
-                            }
-
-                            // Add the more common surface metal ores.
-                            if (Total_Plata >= Total_Cobre && Total_Plata >= Total_Hierro)
-                            {
-                                Texto_Análisis += " and it should have a lot of hard to get silver ores exposed on the surface among other resources";
-                            }
-                            else if (Total_Cobre >= Total_Plata && Total_Cobre >= Total_Hierro)
-                            {
-                                Texto_Análisis += " and it should have a lot of easy to get copper ores exposed on the surface among other resources";
-                            }
-                            else// if (Total_Hierro >= Total_Plata && Total_Hierro >= Total_Cobre)
-                            {
-                                if (Total_Hierro_Difícil >= Total_Hierro_Medio && Total_Hierro_Difícil >= Total_Hierro_Fácil)
-                                {
-                                    Texto_Análisis += " and it should have a lot of hard to get iron ores exposed on the surface among other resources";
-                                }
-                                else if (Total_Hierro_Fácil >= Total_Hierro_Difícil && Total_Hierro_Fácil >= Total_Hierro_Medio)
-                                {
-                                    Texto_Análisis += " and it should have a lot of easy to get iron ores exposed on the surface among other resources";
-                                }
-                                else
-                                {
-                                    Texto_Análisis += " and it should have a lot of iron ores exposed on the surface among other resources";
-                                }
-                            }
-
-                            // Add the world recommendation.
-                            if (Recomendado == 1)
-                            {
-                                Texto_Análisis += ", highly recommended for novices";
-                            }
-                            else if (Recomendado == 2)
-                            {
-                                Texto_Análisis += ", recommended for novices";
-                            }
-                            else if (Recomendado == 3)
-                            {
-                                Texto_Análisis += ", recommended for experts";
-                            }
-                            else if (Recomendado == 4)
-                            {
-                                Texto_Análisis += ", only recommended for experts";
-                            }
-
-
-                            Matriz_Porcentajes = null;
-                            TextBox_Análisis.Text = Texto_Análisis + ".";
-                            Barra_Estado_Etiqueta_Minerales.Text = "Ores: " + Program.Traducir_Número_Decimales_Redondear(((double)Total_Minerales * 100d) / (double)Total_Biomas, 2) + " %";
-                            Barra_Estado_Etiqueta_Fácil.Text = Program.Traducir_Número_Decimales_Redondear(((double)Total_Fácil * 100d) / (double)Total_Biomas, 2) + " %";
-                            Barra_Estado_Etiqueta_Media.Text = Program.Traducir_Número_Decimales_Redondear(((double)Total_Media * 100d) / (double)Total_Biomas, 2) + " %";
-                            Barra_Estado_Etiqueta_Difícil.Text = Program.Traducir_Número_Decimales_Redondear(((double)Total_Difícil * 100d) / (double)Total_Biomas, 2) + " %";
-                            if (Lista_Biomas.Count > 1) Lista_Biomas.Sort();
-                            this.Text = Texto_Título + " - [" + Program.Traducir_Número(Lista_Biomas.Count) + (Lista_Biomas.Count != 1 ? " Biomes" : " Biome") + " found: " + Program.Traducir_Lista_Variables(Lista_Biomas) + "]";
-                            Imagen_Original = new Bitmap(Ancho, Alto, PixelFormat.Format24bppRgb);
-                            Imagen_Original_Simple = new Bitmap(Ancho, Alto, PixelFormat.Format24bppRgb);
-                            BitmapData Bitmap_Data = Imagen_Original.LockBits(new Rectangle(0, 0, Ancho, Alto), ImageLockMode.ReadWrite, Imagen_Original.PixelFormat);
-                            BitmapData Bitmap_Data_Simple = Imagen_Original_Simple.LockBits(new Rectangle(0, 0, Ancho, Alto), ImageLockMode.ReadWrite, Imagen_Original_Simple.PixelFormat);
-                            byte[] Matriz_Bytes_ARGB = new byte[Math.Abs(Bitmap_Data.Stride) * Alto];
-                            byte[] Matriz_Bytes_ARGB_Simple = new byte[Math.Abs(Bitmap_Data.Stride) * Alto];
-                            int Bytes_Aumento = Image.IsAlphaPixelFormat(Imagen_Original.PixelFormat) ? 4 : 3;
-                            int Bytes_Diferencia = Math.Abs(Bitmap_Data.Stride) - ((Ancho * Image.GetPixelFormatSize(Imagen_Original.PixelFormat)) / 8);
-                            // Start the byte index at 16, since it seems to be some sort of header or so.
-                            for (int Y = 0, Índice = 0, Índice_Byte = 16; Y < Alto; Y++, Índice += Bytes_Diferencia)
-                            {
-                                for (int X = 0; X < Ancho; X++, Índice += Bytes_Aumento, Índice_Byte++)
-                                {
-                                    if (Índice_Byte < Matriz_Bytes.Length &&
-                                        Matriz_Bytes[Índice_Byte] < PixARK.Biomas.Matriz_Biomas.Length)
-                                    {
-                                        Matriz_Bytes_ARGB[Índice + 2] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Color.R;
-                                        Matriz_Bytes_ARGB[Índice + 1] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Color.G;
-                                        Matriz_Bytes_ARGB[Índice] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Color.B;
-                                    }
-                                    else // Unknown biome found, use black color instead.
-                                    {
-                                        Matriz_Bytes_ARGB[Índice + 2] = 0; // Red.
-                                        Matriz_Bytes_ARGB[Índice + 1] = 0; // Green.
-                                        Matriz_Bytes_ARGB[Índice] = 0; // Blue.
-                                    }
-
-                                    if (Índice_Byte < Matriz_Bytes.Length &&
-                                        Matriz_Bytes[Índice_Byte] < PixARK.Biomas.Matriz_Biomas.Length)
-                                    {
-                                        Matriz_Bytes_ARGB_Simple[Índice + 2] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Color_Simple.R;
-                                        Matriz_Bytes_ARGB_Simple[Índice + 1] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Color_Simple.G;
-                                        Matriz_Bytes_ARGB_Simple[Índice] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Color_Simple.B;
-                                    }
-                                    else // Unknown biome found, use black color instead.
-                                    {
-                                        Matriz_Bytes_ARGB_Simple[Índice + 2] = 0; // Red.
-                                        Matriz_Bytes_ARGB_Simple[Índice + 1] = 0; // Green.
-                                        Matriz_Bytes_ARGB_Simple[Índice] = 0; // Blue.
-                                    }
-                                }
-                            }
-                            Marshal.Copy(Matriz_Bytes_ARGB, 0, Bitmap_Data.Scan0, Matriz_Bytes_ARGB.Length);
-                            Marshal.Copy(Matriz_Bytes_ARGB_Simple, 0, Bitmap_Data_Simple.Scan0, Matriz_Bytes_ARGB_Simple.Length);
-                            Imagen_Original.UnlockBits(Bitmap_Data);
-                            Imagen_Original_Simple.UnlockBits(Bitmap_Data_Simple);
-                            Bitmap_Data = null;
-                            Bitmap_Data_Simple = null;
-                            Matriz_Bytes_ARGB = null;
-                            Matriz_Bytes_ARGB_Simple = null;
-                            // Get only the "real map", without the world borders extra part, which isn't mineable at all?
-                            Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
                         }
-                        Matriz_Bytes = null;
-                        Adaptador_SQL.Dispose();
-                        Adaptador_SQL = null;
-                        Conexión_SQL.Close();
-                        Conexión_SQL.Dispose();
-                        Conexión_SQL = null;
-                        Set_Datos.Dispose();
-                        Set_Datos = null;
+                        else
+                        {
+                            // Count all biome percentages, even the ones outside the world border.
+                            for (int Índice_Byte = Índice_Byte_Bioma_Inicio; Índice_Byte < Total_Píxeles; Índice_Byte++)
+                            {
+                                if (Índice_Byte < Matriz_Bytes_Biomas.Length)
+                                {
+                                    //byte Valor = Matriz_Bytes[Índice_Byte];
+                                    //if (Valor < Mínimo) Mínimo = Valor;
+                                    //if (Valor > Máximo) Máximo = Valor;
+                                    Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]]++;
+                                    if (!Lista_Biomas.Contains(Matriz_Bytes_Biomas[Índice_Byte])) Lista_Biomas.Add(Matriz_Bytes_Biomas[Índice_Byte]);
+                                    if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Dificultad == PixARK.Dificultades.Easy) Total_Fácil++;
+                                    else if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Dificultad == PixARK.Dificultades.Medium) Total_Media++;
+                                    else if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Dificultad == PixARK.Dificultades.Hard) Total_Difícil++;
+
+                                    if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 0 ||
+                                            //PixARK.Biomas.Matriz_Biomas[Matriz_Bytes[Índice_Byte]].Índice == 11 ||
+                                            PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 13) Total_Agua++;
+
+                                    if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 15 ||
+                                        PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 18)
+                                    {
+                                        Total_Minerales++;
+                                        Total_Cobre++;
+                                    }
+
+                                    if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 17)
+                                    {
+                                        Total_Minerales++;
+                                        Total_Hierro++;
+                                        Total_Hierro_Fácil++;
+                                    }
+
+                                    if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 14 ||
+                                        PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 16 ||
+                                        PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 21)
+                                    {
+                                        Total_Minerales++;
+                                        Total_Hierro++;
+                                        Total_Hierro_Medio++;
+                                    }
+
+                                    if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 20 ||
+                                        PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 22)
+                                    {
+                                        Total_Minerales++;
+                                        Total_Hierro++;
+                                        Total_Hierro_Difícil++;
+                                    }
+
+                                    if (PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Índice == 23)
+                                    {
+                                        Total_Minerales++;
+                                        Total_Plata++;
+                                    }
+                                }
+                            }
+                            Total_Biomas = Total_Píxeles; // Use all the biomes, even the ones unreachable.
+                        }
+                        int[] Matriz_Porcentajes = new int[101]; // Array with biome percentages (0 to 100).
+                        for (int Índice_Porcentaje = 0; Índice_Porcentaje <= 100; Índice_Porcentaje++)
+                        {
+                            Matriz_Porcentajes[Índice_Porcentaje] = (int)Math.Round(((double)Índice_Porcentaje * (double)Total_Biomas) / 100d, MidpointRounding.AwayFromZero);
+                        }
+                        Grupo_Biomas_Fáciles.Text = "Easy difficulty main biomes - [" + Program.Traducir_Número_Decimales_Redondear(((double)(Matriz_Biomas[10] + Matriz_Biomas[2] + Matriz_Biomas[5] + Matriz_Biomas[8] + Matriz_Biomas[13]) * 100d) / (double)Total_Biomas, 4) + " %]";
+                        Grupo_Biomas_Medios.Text = "Medium difficulty main biomes - [" + Program.Traducir_Número_Decimales_Redondear(((double)(Matriz_Biomas[0] + Matriz_Biomas[1] + Matriz_Biomas[4] + Matriz_Biomas[7]) * 100d) / (double)Total_Biomas, 4) + " %]";
+                        Grupo_Biomas_Difíciles.Text = "Hard difficulty main biomes - [" + Program.Traducir_Número_Decimales_Redondear(((double)(Matriz_Biomas[9] + Matriz_Biomas[6] + Matriz_Biomas[3]) * 100d) / (double)Total_Biomas, 4) + " %]";
+                        Grupo_Recursos_Fáciles.Text = "Easy difficulty resources biomes - [" + Program.Traducir_Número_Decimales_Redondear(((double)(Matriz_Biomas[15] + Matriz_Biomas[17] + Matriz_Biomas[18] + Matriz_Biomas[11]) * 100d) / (double)Total_Biomas, 4) + " %]";
+                        Grupo_Recursos_Medios.Text = "Medium difficulty resources biomes - [" + Program.Traducir_Número_Decimales_Redondear(((double)(Matriz_Biomas[21] + Matriz_Biomas[16] + Matriz_Biomas[14]) * 100d) / (double)Total_Biomas, 4) + " %]";
+                        Grupo_Recursos_Difíciles.Text = "Hard difficulty resources biomes - [" + Program.Traducir_Número_Decimales_Redondear(((double)(Matriz_Biomas[20] + Matriz_Biomas[22] + Matriz_Biomas[23]) * 100d) / (double)Total_Biomas, 4) + " %]";
+                        for (int Índice = 0; Índice < 24; Índice++)
+                        {
+                            if (Índice != 12 &&
+                                Índice != 19 &&
+                                Índice < Matriz_Etiquetas.Length &&
+                                Índice < PixARK.Biomas.Matriz_Biomas.Length)
+                            {
+                                Matriz_Etiquetas[Índice].ForeColor = Matriz_Biomas[Índice] > 0 ? (Matriz_Biomas[Índice] >= Matriz_Porcentajes[8] ? Color.Blue : Color.Black) : Color.Red;
+                                Matriz_Etiquetas[Índice].Text = PixARK.Biomas.Matriz_Biomas[Índice].Índice.ToString() + ": " + (string.Compare(PixARK.Biomas.Matriz_Biomas[Índice].Nombre, PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple, true) != 0 ? PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple + (!PixARK.Biomas.Matriz_Biomas[Índice].Nombre_Simple.EndsWith("s") ? "'s " : "' ") : null) + PixARK.Biomas.Matriz_Biomas[Índice].Nombre + (PixARK.Biomas.Matriz_Biomas[Índice].Minerales != PixARK.Minerales.Unknown ? " (" + PixARK.Biomas.Matriz_Biomas[Índice].Minerales.ToString().Replace('_', ' ') + ")" : null) + (Índice != 12 && Índice != 19 ? " [" + Program.Traducir_Número_Decimales_Redondear(((double)Matriz_Biomas[Índice] * 100d) / (double)Total_Biomas, 4) + " %]." : ".");
+                            }
+                        }
+
+                        // Find the more and less common biomes.
+                        int Mínimo_Índice = -1;
+                        int Mínimo_Total = int.MaxValue;
+                        int Mínimo_Cero_Índice = -1;
+                        int Mínimo_Cero_Total = int.MaxValue;
+                        int Máximo_Índice = -1;
+                        int Máximo_Total = int.MinValue;
+                        for (int Índice = 0; Índice < PixARK.Biomas.Matriz_Biomas.Length; Índice++)
+                        {
+                            if (!PixARK.Biomas.Matriz_Biomas[Índice].Bioma_Minerales)
+                            {
+                                if (Matriz_Biomas[Índice] < Mínimo_Total &&
+                                    Índice != 10) // Minimum biome found, but ignore the biome 10 (Novice Grassland).
+                                {
+                                    Mínimo_Índice = Índice;
+                                    Mínimo_Total = Matriz_Biomas[Índice];
+                                }
+                                if (Matriz_Biomas[Índice] > 0 &&
+                                    Matriz_Biomas[Índice] < Mínimo_Cero_Total &&
+                                    Índice != 10) // Minimum existing biome found.
+                                {
+                                    // Ignore the biome index 10 (Novice Grassland) since after
+                                    // generating a few hundreds of levels it seems that it always
+                                    // generates 9 small patches of this biome, and always separated
+                                    // as if the world was splitted into a 3 x 3 grid and then was
+                                    // always placed one of these biomes in each section, although
+                                    // they often seem to appear inside the border zone of the world
+                                    // meaning most of them won't even be visible at all, so just
+                                    // ignore that biome to see the full world biome balance.
+                                    Mínimo_Cero_Índice = Índice;
+                                    Mínimo_Cero_Total = Matriz_Biomas[Índice];
+                                }
+                                if (Matriz_Biomas[Índice] > Máximo_Total) // Maximum biome found.
+                                {
+                                    Máximo_Índice = Índice;
+                                    Máximo_Total = Matriz_Biomas[Índice];
+                                }
+                            }
+                        }
+                        // Exclude the currently non existing biomes from the difference.
+                        int Diferencia_Máximo_Mínimo = Máximo_Total - Mínimo_Cero_Total;
+
+                        // Now make some kind of world analysis like the ones on the PixARK world maps wiki.
+                        string Texto_Análisis = "The seed " + Program.Traducir_Número(Semilla) + " has ";
+
+                        // Add the biome count.
+                        if (Lista_Biomas.Count >= 22) Texto_Análisis += "all biomes, ";
+                        else if (Lista_Biomas.Count >= 20) Texto_Análisis += "almost all biomes, ";
+                        else if (Lista_Biomas.Count >= 18) Texto_Análisis += "several biomes missing, ";
+                        else if (Lista_Biomas.Count >= 16) Texto_Análisis += "lots of biomes missing, ";
+                        else Texto_Análisis += "too many biomes missing, ";
+
+                        if (Diferencia_Máximo_Mínimo < Matriz_Porcentajes[10])
+                        {
+                            Texto_Análisis += "perfectly balanced, ";
+                        }
+                        else if (Diferencia_Máximo_Mínimo < Matriz_Porcentajes[15])
+                        {
+                            Texto_Análisis += "very well balanced, ";
+                        }
+                        else if (Diferencia_Máximo_Mínimo < Matriz_Porcentajes[20])
+                        {
+                            Texto_Análisis += "well balanced, ";
+                        }
+                        else if (Diferencia_Máximo_Mínimo >= Matriz_Porcentajes[30])
+                        {
+                            Texto_Análisis += "badly balanced, ";
+                        }
+
+                        // Add the more common biome in the world.
+                        if (Máximo_Total >= Matriz_Porcentajes[25])
+                        {
+                            Texto_Análisis += "with mostly " + PixARK.Biomas.Matriz_Biomas[Máximo_Índice].Nombre.ToLowerInvariant() + " ";
+                        }
+                        else
+                        {
+                            Texto_Análisis += "with lots of " + PixARK.Biomas.Matriz_Biomas[Máximo_Índice].Nombre.ToLowerInvariant() + " ";
+                        }
+
+                        // Add the less common biomes in the world.
+                        if (Mínimo_Total > 0)
+                        {
+                            Texto_Análisis += "and very few " + PixARK.Biomas.Matriz_Biomas[Mínimo_Índice].Nombre.ToLowerInvariant() + ", ";
+                        }
+                        else
+                        {
+                            List<string> Lista_Biomas_Inexistentes = new List<string>();
+                            for (int Índice = 0; Índice < 14/*PixARK.Biomas.Matriz_Biomas.Length*/; Índice++)
+                            {
+                                if (Índice != 10 && // Again ignore the biome 10 or "Novice Grassland".
+                                    Índice != 12 &&
+                                    Índice != 19 &&
+                                    Matriz_Biomas[Índice] <= 0)
+                                {
+                                    Lista_Biomas_Inexistentes.Add(PixARK.Biomas.Matriz_Biomas[Índice].Nombre.ToLowerInvariant());
+                                }
+                            }
+                            if (Lista_Biomas_Inexistentes.Count > 0)
+                            {
+                                // More than one biome might be missing, so sort and show all the missing names.
+                                if (Lista_Biomas_Inexistentes.Count > 1) Lista_Biomas_Inexistentes.Sort();
+                                string Texto_Biomas_Inexistentes = null;
+                                for (int Índice = 0; Índice < Lista_Biomas_Inexistentes.Count; Índice++)
+                                {
+                                    Texto_Biomas_Inexistentes += Lista_Biomas_Inexistentes[Índice] + (Índice != Lista_Biomas_Inexistentes.Count - 2 ? ", " : " and ");
+                                }
+                                Texto_Análisis += "and nothing of " + Texto_Biomas_Inexistentes;
+                            }
+                            else // This should never happen.
+                            {
+                                Texto_Análisis += "and nothing of " + PixARK.Biomas.Matriz_Biomas[Mínimo_Índice].Nombre.ToLowerInvariant() + ", ";
+                            }
+                        }
+
+                        // Add the biomes difficulty.
+                        byte Recomendado = 0; // 1 for very novices, 2 for novices, 3 for experts and 4 for very experts.
+                        if (Total_Difícil >= Total_Media * 2 && Total_Difícil >= Total_Fácil * 2)
+                        {
+                            Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's a very hard biomes map" : "it's a very hard biomes map";
+                            if (Total_Media < Matriz_Porcentajes[20]) Texto_Análisis += " with very few medium biomes";
+                            else if (Total_Fácil < Matriz_Porcentajes[20])
+                            {
+                                Texto_Análisis += " with very few easy biomes";
+                                Recomendado = 4;
+                            }
+                        }
+                        else if (Total_Media >= Total_Difícil * 2 && Total_Media >= Total_Fácil * 2)
+                        {
+                            Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's a very medium biomes map" : "it's a very medium biomes map";
+                            if (Total_Difícil < Matriz_Porcentajes[20]) Texto_Análisis += " with very few hard biomes";
+                            else if (Total_Fácil < Matriz_Porcentajes[20]) Texto_Análisis += " with very few easy biomes";
+                        }
+                        else if (Total_Fácil >= Total_Difícil * 2 && Total_Fácil >= Total_Media * 2)
+                        {
+                            Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's a very easy biomes map" : "it's a very easy biomes map";
+                            if (Total_Difícil < Matriz_Porcentajes[20])
+                            {
+                                Texto_Análisis += " with very few hard biomes";
+                                Recomendado = 1;
+                            }
+                            else if (Total_Media < Matriz_Porcentajes[20]) Texto_Análisis += " with very few medium biomes";
+                        }
+                        else if (Total_Difícil >= Total_Media && Total_Difícil >= Total_Fácil)
+                        {
+                            Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's mostly a hard biomes map" : "it's mostly a hard biomes map";
+                            if (Total_Media < Matriz_Porcentajes[20]) Texto_Análisis += " with very few medium biomes";
+                            else if (Total_Fácil < Matriz_Porcentajes[20])
+                            {
+                                Texto_Análisis += " with very few easy biomes";
+                                Recomendado = 3;
+                            }
+                        }
+                        else if (Total_Media >= Total_Difícil && Total_Media >= Total_Fácil)
+                        {
+                            Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's mostly a medium biomes map" : "it's mostly a medium biomes map";
+                            if (Total_Difícil < Matriz_Porcentajes[20]) Texto_Análisis += " with very few hard biomes";
+                            else if (Total_Fácil < Matriz_Porcentajes[20]) Texto_Análisis += " with very few easy biomes";
+                        }
+                        else if (Total_Fácil >= Total_Difícil && Total_Fácil >= Total_Media)
+                        {
+                            Texto_Análisis += string.IsNullOrEmpty(Texto_Análisis) ? "It's mostly an easy biomes map" : "it's mostly an easy biomes map";
+                            if (Total_Difícil < Matriz_Porcentajes[20])
+                            {
+                                Texto_Análisis += " with very few hard biomes";
+                                Recomendado = 2;
+                            }
+                            else if (Total_Media < Matriz_Porcentajes[20]) Texto_Análisis += " with very few medium biomes";
+                        }
+
+                        // Add the water to see if it's useful for using boats.
+                        if (Total_Agua >= Matriz_Porcentajes[25])
+                        {
+                            Texto_Análisis += ", perfect to navigate using boats";
+                        }
+                        else if (Total_Agua >= Matriz_Porcentajes[20])
+                        {
+                            Texto_Análisis += ", useful to navigate using boats";
+                        }
+                        else if (Total_Agua <= 0) // Dry world.
+                        {
+                            Texto_Análisis += ", doesn't have any water to navigate";
+                        }
+                        else if (Total_Agua <= Matriz_Porcentajes[5])
+                        {
+                            Texto_Análisis += ", doesn't have enough water to navigate";
+                        }
+                        else if (Total_Agua <= Matriz_Porcentajes[10])
+                        {
+                            Texto_Análisis += ", doesn't have much water to navigate";
+                        }
+
+                        // Add the more common surface metal ores.
+                        if (Total_Plata >= Total_Cobre && Total_Plata >= Total_Hierro)
+                        {
+                            Texto_Análisis += " and it should have hard to get silver ores exposed on the surface among other resources";
+                        }
+                        else if (Total_Cobre >= Total_Plata && Total_Cobre >= Total_Hierro)
+                        {
+                            Texto_Análisis += " and it should have easy to get copper ores exposed on the surface among other resources";
+                        }
+                        else// if (Total_Hierro >= Total_Plata && Total_Hierro >= Total_Cobre)
+                        {
+                            if (Total_Hierro_Difícil >= Total_Hierro_Medio && Total_Hierro_Difícil >= Total_Hierro_Fácil)
+                            {
+                                Texto_Análisis += " and it should have hard to get iron ores exposed on the surface among other resources";
+                            }
+                            else if (Total_Hierro_Fácil >= Total_Hierro_Difícil && Total_Hierro_Fácil >= Total_Hierro_Medio)
+                            {
+                                Texto_Análisis += " and it should have easy to get iron ores exposed on the surface among other resources";
+                            }
+                            else
+                            {
+                                Texto_Análisis += " and it should have iron ores exposed on the surface among other resources";
+                            }
+                        }
+
+                        // Add the world recommendation.
+                        if (Recomendado == 1)
+                        {
+                            Texto_Análisis += ", highly recommended for novices";
+                        }
+                        else if (Recomendado == 2)
+                        {
+                            Texto_Análisis += ", recommended for novices";
+                        }
+                        else if (Recomendado == 3)
+                        {
+                            Texto_Análisis += ", recommended for experts";
+                        }
+                        else if (Recomendado == 4)
+                        {
+                            Texto_Análisis += ", only recommended for experts";
+                        }
+
+                        Matriz_Porcentajes = null;
+                        TextBox_Análisis.Text = Texto_Análisis + ".";
+                        Barra_Estado_Etiqueta_Minerales.Text = "Ores: " + Program.Traducir_Número_Decimales_Redondear(((double)Total_Minerales * 100d) / (double)Total_Biomas, 2) + " %";
+                        Barra_Estado_Etiqueta_Fácil.Text = Program.Traducir_Número_Decimales_Redondear(((double)Total_Fácil * 100d) / (double)Total_Biomas, 2) + " %";
+                        Barra_Estado_Etiqueta_Media.Text = Program.Traducir_Número_Decimales_Redondear(((double)Total_Media * 100d) / (double)Total_Biomas, 2) + " %";
+                        Barra_Estado_Etiqueta_Difícil.Text = Program.Traducir_Número_Decimales_Redondear(((double)Total_Difícil * 100d) / (double)Total_Biomas, 2) + " %";
+                        if (Lista_Biomas.Count > 1) Lista_Biomas.Sort();
+                        if (string.Compare(Environment.UserName, "Jupisoft", true) == 0)
+                        {
+                            int Biomas_Desconocidos = 0;
+                            foreach (int Índice_Bioma in Lista_Biomas)
+                            {
+                                try
+                                {
+                                    if (Índice_Bioma == 12 ||
+                                        Índice_Bioma == 19 ||
+                                        Índice_Bioma >= 24)
+                                    {
+                                        Biomas_Desconocidos++;
+                                    }
+                                }
+                                catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+                            }
+                            if (Biomas_Desconocidos > 0)
+                            {
+                                MessageBox.Show(this, Program.Traducir_Número(Biomas_Desconocidos) + (Biomas_Desconocidos != 1 ? " unknown biomes found!" : " unknown biome found!"), Program.Texto_Título_Versión, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                        }
+                        this.Text = Texto_Título + " - [" + Program.Traducir_Número(Lista_Biomas.Count) + (Lista_Biomas.Count != 1 ? " Biomes" : " Biome") + " found: " + Program.Traducir_Lista_Variables(Lista_Biomas) + "]";
+                        Imagen_Biomas_Original = new Bitmap(Ancho, Alto, PixelFormat.Format32bppArgb);
+                        Imagen_Biomas_Original_Simple = new Bitmap(Ancho, Alto, PixelFormat.Format32bppArgb);
+                        BitmapData Bitmap_Data = Imagen_Biomas_Original.LockBits(new Rectangle(0, 0, Ancho, Alto), ImageLockMode.ReadWrite, Imagen_Biomas_Original.PixelFormat);
+                        BitmapData Bitmap_Data_Simple = Imagen_Biomas_Original_Simple.LockBits(new Rectangle(0, 0, Ancho, Alto), ImageLockMode.ReadWrite, Imagen_Biomas_Original_Simple.PixelFormat);
+                        byte[] Matriz_Bytes_ARGB = new byte[Math.Abs(Bitmap_Data.Stride) * Alto];
+                        byte[] Matriz_Bytes_ARGB_Simple = new byte[Math.Abs(Bitmap_Data.Stride) * Alto];
+                        int Bytes_Aumento = Image.IsAlphaPixelFormat(Imagen_Biomas_Original.PixelFormat) ? 4 : 3;
+                        int Bytes_Diferencia = Math.Abs(Bitmap_Data.Stride) - ((Ancho * Image.GetPixelFormatSize(Imagen_Biomas_Original.PixelFormat)) / 8);
+                        // Usually start the byte index at 16, since it seems to be some sort of header or so.
+                        for (int Y = 0, Índice = 0, Índice_Byte = Índice_Byte_Bioma_Inicio; Y < Alto; Y++, Índice += Bytes_Diferencia)
+                        {
+                            for (int X = 0; X < Ancho; X++, Índice += Bytes_Aumento, Índice_Byte++)
+                            {
+                                // Known biome found, draw it's approximate colors.
+                                if (Índice_Byte < Matriz_Bytes_Biomas.Length &&
+                                    Matriz_Bytes_Biomas[Índice_Byte] < PixARK.Biomas.Matriz_Biomas.Length)
+                                {
+                                    // Main biome map with ores and resources.
+                                    Matriz_Bytes_ARGB[Índice + 3] = 255;
+                                    Matriz_Bytes_ARGB[Índice + 2] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Color.R;
+                                    Matriz_Bytes_ARGB[Índice + 1] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Color.G;
+                                    Matriz_Bytes_ARGB[Índice] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Color.B;
+
+                                    // Main biome map without ores and resources (the one PixARK shows).
+                                    Matriz_Bytes_ARGB_Simple[Índice + 3] = 255;
+                                    Matriz_Bytes_ARGB_Simple[Índice + 2] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Color_Simple.R;
+                                    Matriz_Bytes_ARGB_Simple[Índice + 1] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Color_Simple.G;
+                                    Matriz_Bytes_ARGB_Simple[Índice] = PixARK.Biomas.Matriz_Biomas[Matriz_Bytes_Biomas[Índice_Byte]].Color_Simple.B;
+                                }
+                                else // Unknown biome found, use black color instead.
+                                {
+                                    // Main biome map with ores and resources.
+                                    Matriz_Bytes_ARGB[Índice + 3] = 255; // Alpha.
+                                    Matriz_Bytes_ARGB[Índice + 2] = 0; // Red.
+                                    Matriz_Bytes_ARGB[Índice + 1] = 0; // Green.
+                                    Matriz_Bytes_ARGB[Índice] = 0; // Blue.
+
+                                    // Main biome map without ores and resources (the one PixARK shows).
+                                    Matriz_Bytes_ARGB_Simple[Índice + 3] = 255; // Alpha.
+                                    Matriz_Bytes_ARGB_Simple[Índice + 2] = 0; // Red.
+                                    Matriz_Bytes_ARGB_Simple[Índice + 1] = 0; // Green.
+                                    Matriz_Bytes_ARGB_Simple[Índice] = 0; // Blue.
+                                }
+                            }
+                        }
+                        Marshal.Copy(Matriz_Bytes_ARGB, 0, Bitmap_Data.Scan0, Matriz_Bytes_ARGB.Length);
+                        Marshal.Copy(Matriz_Bytes_ARGB_Simple, 0, Bitmap_Data_Simple.Scan0, Matriz_Bytes_ARGB_Simple.Length);
+                        Imagen_Biomas_Original.UnlockBits(Bitmap_Data);
+                        Imagen_Biomas_Original_Simple.UnlockBits(Bitmap_Data_Simple);
+                        Bitmap_Data = null;
+                        Bitmap_Data_Simple = null;
+                        Matriz_Bytes_ARGB = null;
+                        Matriz_Bytes_ARGB_Simple = null;
+                        // Debug test for Jupisoft that saves all the original generated maps.
+                        if (string.Compare(Environment.UserName, "Jupisoft", true) == 0)
+                        {
+                            string Ruta_Mapas_Jupisoft = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\Jupisoft PixARK Maps";
+                            Program.Crear_Carpetas(Ruta_Mapas_Jupisoft);
+                            Ruta_Mapas_Jupisoft += "\\" + Semilla.ToString() + ".png";
+                            if (!File.Exists(Ruta_Mapas_Jupisoft))
+                            {
+                                Imagen_Biomas_Original.Save(Ruta_Mapas_Jupisoft, ImageFormat.Png);
+                            }
+                            Ruta_Mapas_Jupisoft = null;
+                        }
+                        // Get only the "real map", without the world borders extra part, which isn't mineable at all.
+                        Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
+                        Matriz_Bytes_Biomas = null;
                     }
                 }
             }
@@ -1260,7 +1802,15 @@ namespace PixARK_Tools
             try
             {
                 if (Variable_Pantalla_Completa) Cursor.Show();
-                MessageBox.Show(this, "[Temporary help file] [2019_10_11_13_38_00_894]\r\n\r\nThis application can load the map from any PixARK world and show a lot more details than the in game map, like surface ores and extra biomes, and it also has full resolution (1 pixel per block).\r\n\r\nIf you can't load any map, locate your PixARK save folder and try to find a folder called \"CubeWorld_Light\" inside of it, then copy it's full path and paste it in the top text box of the application and press \"Enter\", if done correct now you should see a map loading after a few seconds.\r\n\r\nYour worlds will always be loaded as read-only, so they will never be modified in any way by this application, which also means that you can quickly see the full map of any world, even if you don't use the cheat to reveal the map or you haven't explored the full world yet, once you see the several markers to spawn in a new world and even with PixARK started you can already load that world in this application without risk.\r\n\r\nAt the bottom right corner you'll see a world analysis text based on the currently loaded world, that analysis was inspired by the PixARK wiki page about the interesting map seeds found by the community, so this might help you post your seed findings onto that page if you want, and also quickly see in detail if a newly created world might be what you were looking for or you need to create a new one.\r\n\r\nSo far in a few dozens of newly created worlds I've never found the biomes \"12\" and \"19\", so perhaps they are related to some boss fights, etc. For now I don't know it's contents or if they even exist at all.\r\n\r\nI've only tested this application with one version of PixARK, and although I believe it should work for most, it might be that a future update stops this application from working as intented, so if you find any bug, please post a comment on GitHub or send me an e-mail from the main context menu and I'll fix it as soon as I can. Thank you for you collaboration.", "Help Viewer for " + Program.Texto_Título_Versión, MessageBoxButtons.OK, MessageBoxIcon.Question);
+                MessageBox.Show(this, "[Temporary help file] [2019_10_15_19_02_08_949]\r\n\r\n" +
+                    "This application can load the map from any PixARK world and show a lot more details than the in game map, like surface ores and extra biomes, and it also has full resolution (1 pixel per block).\r\n\r\n" +
+                    "If you can't load any map, locate your PixARK save folder and try to find a folder called \"CubeWorld_Light\" inside of it, then copy it's full path and paste it in the top text box of the application and press \"Enter\", if done correct now you should see a map loading after a few seconds.\r\n\r\n" +
+                    "Your worlds will always be loaded as read-only, so they will never be modified in any way by this application, which also means that you can quickly see the full map of any world, even if you don't use the cheat to reveal the map or you haven't explored the full world yet, once you see the several markers to spawn in a new world and even with PixARK started you can already load that world in this application without risk.\r\n\r\n" +
+                    "At the bottom right corner you'll see a world analysis text based on the currently loaded world, that analysis was inspired by the PixARK wiki page about the interesting map seeds found by the community, so this might help you post your seed findings onto that page if you want, and also quickly see in detail if a newly created world might be what you were looking for or you need to create a new one.\r\n\r\n" +
+                    "So far in a few hundreds of newly created worlds I've never found the biomes \"12\" and \"19\", so perhaps they are related to some boss fights, etc. For now I don't know it's contents or if they even exist at all. Also I've found that most worlds doesn't seem to have much mountain forest, and always there are 9 patches of novice grassland divided in a 3 x 3 grid, although some end up outside the world border, making a random number of spawn places each time, since only the \"complete\" ones seem to be valid spawns.\r\n\r\n" +
+                    "Now when pressing \"F9\" it shows all the known PixARK cheats to save you some time.\r\n\r\n" +
+                    "I've tested this application with the PixARK versions 1.54 and 1.67, and for now it's working as expected, it might be that a future update stops this application from working as intented, so if you find any bug, please post a comment on GitHub or send me an e-mail from the main context menu and I'll fix it as soon as I can. Thank you for you collaboration.",
+                    "Help Viewer for " + Program.Texto_Título_Versión, MessageBoxButtons.OK, MessageBoxIcon.Question);
                 if (Variable_Pantalla_Completa) Cursor.Hide();
                 /*Ventana_Visor_Ayuda Ventana = new Ventana_Visor_Ayuda();
                 Ventana.Ayuda = Ventana_Visor_Ayuda.Ayudas.Main_window;
@@ -1351,7 +1901,7 @@ namespace PixARK_Tools
             {
                 this.Cursor = Cursors.WaitCursor;
                 Variable_Ocultar_Bordes = Menú_Contextual_Ocultar_Bordes.Checked;
-                Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
             finally { this.Cursor = Cursors.Default; }
@@ -1363,7 +1913,7 @@ namespace PixARK_Tools
             {
                 this.Cursor = Cursors.WaitCursor;
                 Variable_Mostrar_Minerales = Menú_Contextual_Mostrar_Minerales.Checked;
-                Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
             finally { this.Cursor = Cursors.Default; }
@@ -1375,9 +1925,34 @@ namespace PixARK_Tools
             {
                 this.Cursor = Cursors.WaitCursor;
                 Variable_Mostrar_Regla = Menú_Contextual_Mostrar_Regla.Checked;
-                Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+            finally { this.Cursor = Cursors.Default; }
+        }
+
+        private void Menú_Contextual_Mostrar_Lista_Trucos_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+                Variable_Mostrar_Lista_Trucos = Menú_Contextual_Mostrar_Lista_Trucos.Checked;
+                if (!Variable_Mostrar_Lista_Trucos)
+                {
+                    Picture.Visible = true;
+                    Grupo_Trucos.Visible = false;
+                    ComboBox_Mundo_PixARK.Select();
+                    ComboBox_Mundo_PixARK.Focus();
+                }
+                else
+                {
+                    Grupo_Trucos.Visible = true;
+                    Picture.Visible = false;
+                    ComboBox_Truco.Select();
+                    ComboBox_Truco.Focus();
+                }
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
             finally { this.Cursor = Cursors.Default; }
         }
 
@@ -1433,52 +2008,50 @@ namespace PixARK_Tools
             finally { this.Cursor = Cursors.Default; }
         }
 
-        private void Menú_Contextual_Copiar_Comando_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                this.Cursor = Cursors.WaitCursor;
-                if (!string.IsNullOrEmpty(PixARK.Texto_Truco_Mostrar_Mapa))
-                {
-                    Clipboard.SetText(PixARK.Texto_Truco_Mostrar_Mapa);
-                    SystemSounds.Asterisk.Play();
-                }
-            }
-            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
-            finally { this.Cursor = Cursors.Default; }
-        }
-
-        private void Menú_Contextual_Copiar_Semilla_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                this.Cursor = Cursors.WaitCursor;
-                Clipboard.SetText(Semilla.ToString());
-                SystemSounds.Asterisk.Play();
-            }
-            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
-            finally { this.Cursor = Cursors.Default; }
-        }
-
         private void Menú_Contextual_Copiar_Click(object sender, EventArgs e)
         {
             try
             {
                 this.Cursor = Cursors.WaitCursor;
-                if (Imagen_Original != null && Imagen_Original_Simple != null && !string.IsNullOrEmpty(ComboBox_Mundo_PixARK.Text))
+                if (((Variable_Mostrar_Mapa == 0 && Imagen_Biomas_Original != null && Imagen_Biomas_Original_Simple != null) ||
+                    (Variable_Mostrar_Mapa == 1 && Imagen_Altura_Original != null) ||
+                    (Variable_Mostrar_Mapa == 2 && Imagen_Arco_Iris_Original != null)) &&
+                    !string.IsNullOrEmpty(ComboBox_Mundo_PixARK.Text))
                 {
                     string Ruta = Application.StartupPath + "\\Maps";
                     Program.Crear_Carpetas(Ruta);
                     Bitmap Imagen = null;
                     if (Variable_Ocultar_Bordes)
                     {
-                        if (Variable_Mostrar_Minerales) Imagen = Imagen_Original.Clone(new Rectangle(512, 512, Imagen_Original.Width - 1024, Imagen_Original.Height - 1024), Imagen_Original.PixelFormat);
-                        else Imagen = Imagen_Original_Simple.Clone(new Rectangle(512, 512, Imagen_Original.Width - 1024, Imagen_Original.Height - 1024), Imagen_Original.PixelFormat);
+                        if (Variable_Mostrar_Mapa == 0)
+                        {
+                            if (Variable_Mostrar_Minerales) Imagen = Imagen_Biomas_Original.Clone(new Rectangle(512, 512, Imagen_Biomas_Original.Width - 1024, Imagen_Biomas_Original.Height - 1024), Imagen_Biomas_Original.PixelFormat);
+                            else Imagen = Imagen_Biomas_Original_Simple.Clone(new Rectangle(512, 512, Imagen_Biomas_Original.Width - 1024, Imagen_Biomas_Original.Height - 1024), Imagen_Biomas_Original.PixelFormat);
+                        }
+                        else if (Variable_Mostrar_Mapa == 1)
+                        {
+                            Imagen = Imagen_Altura_Original.Clone(new Rectangle(512, 512, Imagen_Altura_Original.Width - 1024, Imagen_Altura_Original.Height - 1024), Imagen_Altura_Original.PixelFormat);
+                        }
+                        else
+                        {
+                            Imagen = Imagen_Arco_Iris_Original.Clone(new Rectangle(512, 512, Imagen_Altura_Original.Width - 1024, Imagen_Altura_Original.Height - 1024), Imagen_Altura_Original.PixelFormat);
+                        }
                     }
                     else
                     {
-                        if (Variable_Mostrar_Minerales) Imagen = Imagen_Original.Clone() as Bitmap;
-                        else Imagen = Imagen_Original_Simple.Clone() as Bitmap;
+                        if (Variable_Mostrar_Mapa == 0)
+                        {
+                            if (Variable_Mostrar_Minerales) Imagen = Imagen_Biomas_Original.Clone() as Bitmap;
+                            else Imagen = Imagen_Biomas_Original_Simple.Clone() as Bitmap;
+                        }
+                        else if (Variable_Mostrar_Mapa == 1)
+                        {
+                            Imagen = Imagen_Altura_Original.Clone() as Bitmap;
+                        }
+                        else
+                        {
+                            Imagen = Imagen_Arco_Iris_Original.Clone() as Bitmap;
+                        }
                     }
                     if (Imagen != null)
                     {
@@ -1561,20 +2134,45 @@ namespace PixARK_Tools
             try
             {
                 this.Cursor = Cursors.WaitCursor;
-                if (Imagen_Original != null && Imagen_Original_Simple != null && !string.IsNullOrEmpty(ComboBox_Mundo_PixARK.Text))
+                if (((Variable_Mostrar_Mapa == 0 && Imagen_Biomas_Original != null && Imagen_Biomas_Original_Simple != null) ||
+                    (Variable_Mostrar_Mapa == 1 && Imagen_Altura_Original != null) ||
+                    (Variable_Mostrar_Mapa == 2 && Imagen_Arco_Iris_Original != null)) &&
+                    !string.IsNullOrEmpty(ComboBox_Mundo_PixARK.Text))
                 {
                     string Ruta = Application.StartupPath + "\\Maps";
                     Program.Crear_Carpetas(Ruta);
                     Bitmap Imagen = null;
                     if (Variable_Ocultar_Bordes)
                     {
-                        if (Variable_Mostrar_Minerales) Imagen = Imagen_Original.Clone(new Rectangle(512, 512, Imagen_Original.Width - 1024, Imagen_Original.Height - 1024), Imagen_Original.PixelFormat);
-                        else Imagen = Imagen_Original_Simple.Clone(new Rectangle(512, 512, Imagen_Original.Width - 1024, Imagen_Original.Height - 1024), Imagen_Original.PixelFormat);
+                        if (Variable_Mostrar_Mapa == 0)
+                        {
+                            if (Variable_Mostrar_Minerales) Imagen = Imagen_Biomas_Original.Clone(new Rectangle(512, 512, Imagen_Biomas_Original.Width - 1024, Imagen_Biomas_Original.Height - 1024), Imagen_Biomas_Original.PixelFormat);
+                            else Imagen = Imagen_Biomas_Original_Simple.Clone(new Rectangle(512, 512, Imagen_Biomas_Original.Width - 1024, Imagen_Biomas_Original.Height - 1024), Imagen_Biomas_Original.PixelFormat);
+                        }
+                        else if (Variable_Mostrar_Mapa == 1)
+                        {
+                            Imagen = Imagen_Altura_Original.Clone(new Rectangle(512, 512, Imagen_Altura_Original.Width - 1024, Imagen_Altura_Original.Height - 1024), Imagen_Altura_Original.PixelFormat);
+                        }
+                        else
+                        {
+                            Imagen = Imagen_Arco_Iris_Original.Clone(new Rectangle(512, 512, Imagen_Altura_Original.Width - 1024, Imagen_Altura_Original.Height - 1024), Imagen_Altura_Original.PixelFormat);
+                        }
                     }
                     else
                     {
-                        if (Variable_Mostrar_Minerales) Imagen = Imagen_Original.Clone() as Bitmap;
-                        else Imagen = Imagen_Original_Simple.Clone() as Bitmap;
+                        if (Variable_Mostrar_Mapa == 0)
+                        {
+                            if (Variable_Mostrar_Minerales) Imagen = Imagen_Biomas_Original.Clone() as Bitmap;
+                            else Imagen = Imagen_Biomas_Original_Simple.Clone() as Bitmap;
+                        }
+                        else if (Variable_Mostrar_Mapa == 1)
+                        {
+                            Imagen = Imagen_Altura_Original.Clone() as Bitmap;
+                        }
+                        else
+                        {
+                            Imagen = Imagen_Arco_Iris_Original.Clone() as Bitmap;
+                        }
                     }
                     if (Imagen != null)
                     {
@@ -1629,7 +2227,7 @@ namespace PixARK_Tools
                 if (Color_ARGB_Bioma != Color.Empty) // Reset.
                 {
                     Color_ARGB_Bioma = Color.Empty;
-                    Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                    Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
                 }
                 Barra_Estado_Etiqueta_Bioma.Image = Program.Crear_Imagen_Color_Fondo(Color.Gray);
                 Barra_Estado_Etiqueta_Bioma.Text = "Biome: ?";
@@ -1643,7 +2241,7 @@ namespace PixARK_Tools
             try
             {
                 // The X and Y coordinates should be in client size "format".
-                if (Imagen_Original != null && Imagen_Original_Simple != null && Imagen_Picture != null)
+                if (Imagen_Biomas_Original != null && Imagen_Biomas_Original_Simple != null && Imagen_Picture != null)
                 {
                     int Ancho = Imagen_Picture.Width;
                     int Alto = Imagen_Picture.Height;
@@ -1654,7 +2252,7 @@ namespace PixARK_Tools
                         if ((e.Button == MouseButtons.None || e.Button == MouseButtons.Right) && Color_ARGB_Bioma != Color.Empty) // Reset.
                         {
                             Color_ARGB_Bioma = Color.Empty;
-                            Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                            Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
                         }
                         // Using "GetPixel()" is very slow, but for a single pixel it should be enough.
                         Color Color_ARGB = Imagen_Picture.GetPixel(X, Y);
@@ -1671,8 +2269,8 @@ namespace PixARK_Tools
                         }
                         Barra_Estado_Etiqueta_Bioma.Image = Program.Crear_Imagen_Color_Fondo(Color_ARGB);
                         Barra_Estado_Etiqueta_Bioma.Text = "Biome: " + Texto_Bioma;
-                        int Ancho_Borde = Variable_Ocultar_Bordes ? Imagen_Original.Width - PixARK.Borde_Mundo_Doble : Imagen_Original.Width;
-                        int Alto_Borde = Variable_Ocultar_Bordes ? Imagen_Original.Height - PixARK.Borde_Mundo_Doble : Imagen_Original.Height;
+                        int Ancho_Borde = Variable_Ocultar_Bordes ? Imagen_Biomas_Original.Width - PixARK.Borde_Mundo_Doble : Imagen_Biomas_Original.Width;
+                        int Alto_Borde = Variable_Ocultar_Bordes ? Imagen_Biomas_Original.Height - PixARK.Borde_Mundo_Doble : Imagen_Biomas_Original.Height;
                         int Coordenada_X = ((X * Ancho_Borde) / Ancho) - (Ancho_Borde / 2);
                         // PixARK seems to use the "Y" as the depth in the 3D world instead of the usual "Z" and the "Z" is used for the height as the "Y".
                         int Coordenada_Y = ((Y * Alto_Borde) / Alto) - (Alto_Borde / 2);
@@ -1696,7 +2294,7 @@ namespace PixARK_Tools
                 if (e.Button != MouseButtons.Right)
                 {
                     // The X and Y coordinates should be in client size "format".
-                    if (Imagen_Original != null && Imagen_Original_Simple != null && Imagen_Picture != null)
+                    if (Imagen_Biomas_Original != null && Imagen_Biomas_Original_Simple != null && Imagen_Picture != null)
                     {
                         int Ancho = Imagen_Picture.Width;
                         int Alto = Imagen_Picture.Height;
@@ -1715,7 +2313,7 @@ namespace PixARK_Tools
                                 {
                                     Texto_Bioma = PixARK.Biomas.Matriz_Biomas[Índice_Bioma].Índice.ToString() + ", " + PixARK.Biomas.Matriz_Biomas[Índice_Bioma].Nombre + " (" + PixARK.Biomas.Matriz_Biomas[Índice_Bioma].Dificultad.ToString() + ")" + (PixARK.Biomas.Matriz_Biomas[Índice_Bioma].Minerales != PixARK.Minerales.Unknown ? " (" + PixARK.Biomas.Matriz_Biomas[Índice_Bioma].Minerales.ToString().Replace('_', ' ') + ")" : null);
                                     Color_ARGB_Bioma = Color_ARGB;
-                                    Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                                    Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
                                     break;
                                 }
                             }
@@ -1727,7 +2325,7 @@ namespace PixARK_Tools
                             if (Color_ARGB_Bioma != Color.Empty) // Reset.
                             {
                                 Color_ARGB_Bioma = Color.Empty;
-                                Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
                             }
                             Barra_Estado_Etiqueta_Bioma.Image = Program.Crear_Imagen_Color_Fondo(Color.Gray);
                             Barra_Estado_Etiqueta_Bioma.Text = "Biome: ?";
@@ -1759,7 +2357,7 @@ namespace PixARK_Tools
                     if (Ancho <= Ancho_Cliente) Alto = Alto_Cliente;
                     else if (Alto <= Alto_Cliente) Ancho = Ancho_Cliente;
                     // Start the image that will be looked when the mouse moves over it to get the biomes.
-                    Imagen_Picture = new Bitmap(Ancho, Alto, PixelFormat.Format24bppRgb);
+                    Imagen_Picture = new Bitmap(Ancho, Alto, PixelFormat.Format32bppArgb);
                     Graphics Pintar = Graphics.FromImage(Imagen_Picture);
                     Pintar.CompositingMode = CompositingMode.SourceCopy;
                     Pintar.CompositingQuality = CompositingQuality.HighQuality;
@@ -1837,14 +2435,17 @@ namespace PixARK_Tools
                         {
                             for (int X = 0; X < Ancho; X++, Índice += Bytes_Aumento)
                             {
-                                if (Matriz_Bytes_ARGB[Índice + 2] != Color_ARGB.R ||
-                                    Matriz_Bytes_ARGB[Índice + 1] != Color_ARGB.G ||
-                                    Matriz_Bytes_ARGB[Índice] != Color_ARGB.B)
+                                if (Matriz_Bytes_ARGB[Índice + 3] > 0)
                                 {
-                                    // Only leave the desired color.
-                                    Matriz_Bytes_ARGB[Índice + 2] = 128;
-                                    Matriz_Bytes_ARGB[Índice + 1] = 128;
-                                    Matriz_Bytes_ARGB[Índice + 0] = 128;
+                                    if (Matriz_Bytes_ARGB[Índice + 2] != Color_ARGB.R ||
+                                        Matriz_Bytes_ARGB[Índice + 1] != Color_ARGB.G ||
+                                        Matriz_Bytes_ARGB[Índice] != Color_ARGB.B)
+                                    {
+                                        // Only leave the desired color.
+                                        Matriz_Bytes_ARGB[Índice + 2] = 128;
+                                        Matriz_Bytes_ARGB[Índice + 1] = 128;
+                                        Matriz_Bytes_ARGB[Índice + 0] = 128;
+                                    }
                                 }
                             }
                         }
@@ -1874,32 +2475,45 @@ namespace PixARK_Tools
             try
             {
                 Color_ARGB_Bioma = Color.Empty;
-                Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
         }
 
-        private void Pictures_Leyenda_MouseDown(object sender, MouseEventArgs e)
+        private void Controles_Leyenda_MouseDown(object sender, MouseEventArgs e)
         {
             try
             {
                 if (e.Button != MouseButtons.Right)
                 {
-                    PictureBox Picture_Leyenda = sender as PictureBox;
-                    if (Picture_Leyenda != null) Color_ARGB_Bioma = Picture_Leyenda.BackColor;
+                    Control Control = sender as Control;
+                    if (Control != null)
+                    {
+                        int Índice_Bioma = -1;
+                        try
+                        {
+                            Índice_Bioma = int.Parse(Control.Name.Replace("Picture_Leyenda_", null).Replace("Etiqueta_Leyenda_", null));
+                        }
+                        catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; Índice_Bioma = -1; }
+                        if (Índice_Bioma > -1)
+                        {
+                            Color_ARGB_Bioma = Matriz_Pictures[Índice_Bioma].BackColor;
+                        }
+                        else Color_ARGB_Bioma = Color.Empty;
+                    }
                     else Color_ARGB_Bioma = Color.Empty;
-                    Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                    Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
                 }
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
         }
 
-        private void Pictures_Leyenda_MouseUp(object sender, MouseEventArgs e)
+        private void Controles_Leyenda_MouseUp(object sender, MouseEventArgs e)
         {
             try
             {
                 Color_ARGB_Bioma = Color.Empty;
-                Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
         }
@@ -1995,7 +2609,7 @@ namespace PixARK_Tools
                     this.TopMost = true;
                 }
                 this.SizeChanged += Ventana_Principal_SizeChanged;
-                Establecer_Imagen_Picture(Variable_Mostrar_Minerales ? Imagen_Original : Imagen_Original_Simple, Color_ARGB_Bioma);
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
             finally { this.Cursor = Cursors.Default; }
@@ -2021,6 +2635,152 @@ namespace PixARK_Tools
             }
             catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
             finally { this.Cursor = Cursors.Default; }
+        }
+
+        private void ComboBox_Truco_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                ComboBox_Truco.Refresh();
+                Establecer_Texto_Código();
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); }
+        }
+
+        private void ListBox_Objeto_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                //ListBox_Objeto.Refresh();
+                Establecer_Texto_Código();
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
+        private void NumericUpDown_Cantidad_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Establecer_Texto_Código();
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
+        private void NumericUpDown_Calidad_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Establecer_Texto_Código();
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
+        private void NumericUpDown_Plano_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Establecer_Texto_Código();
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
+        private void TextBox_Código_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
+        private void Botón_Copiar_Código_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+                if (!string.IsNullOrEmpty(TextBox_Código.Text))
+                {
+                    Clipboard.SetText(TextBox_Código.Text);
+                    SystemSounds.Asterisk.Play();
+                }
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+            finally { this.Cursor = Cursors.Default; }
+        }
+
+        internal void Establecer_Texto_Código()
+        {
+            try
+            {
+                if (ComboBox_Truco.SelectedIndex > -1)
+                {
+                    if (ComboBox_Truco.SelectedIndex == 0)
+                    {
+                        ListBox_Objeto.Enabled = false;
+                        NumericUpDown_Cantidad.Enabled = false;
+                        NumericUpDown_Calidad.Enabled = false;
+                        NumericUpDown_Plano.Enabled = false;
+                        TextBox_Código.Text = "cheat OpenFogOfWar";
+                    }
+                    else if (ComboBox_Truco.SelectedIndex == 1)
+                    {
+                        ListBox_Objeto.Enabled = true;
+                        NumericUpDown_Cantidad.Enabled = true;
+                        NumericUpDown_Calidad.Enabled = true;
+                        NumericUpDown_Plano.Enabled = true;
+                        TextBox_Código.Text = "cheat GiveItemNum " + ListBox_Objeto.SelectedIndex.ToString() + " " + NumericUpDown_Cantidad.Value.ToString() + " " + NumericUpDown_Calidad.Value.ToString() + " " + NumericUpDown_Plano.Value.ToString();
+                    }
+                }
+                else
+                {
+                    ListBox_Objeto.Enabled = false;
+                    NumericUpDown_Cantidad.Enabled = false;
+                    NumericUpDown_Calidad.Enabled = false;
+                    NumericUpDown_Plano.Enabled = false;
+                    TextBox_Código.Text = null;
+                }
+                TextBox_Código.Refresh();
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
+        private void Menú_Contextual_Mostrar_Mapa_Biomas_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Variable_Mostrar_Mapa = 0;
+                Menú_Contextual_Mostrar_Mapa_Altura.Checked = false;
+                Menú_Contextual_Mostrar_Mapa_Arco_Iris.Checked = false;
+                Menú_Contextual_Mostrar_Mapa_Biomas.Checked = true;
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
+        private void Menú_Contextual_Mostrar_Mapa_Altura_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Variable_Mostrar_Mapa = 1;
+                Menú_Contextual_Mostrar_Mapa_Biomas.Checked = false;
+                Menú_Contextual_Mostrar_Mapa_Arco_Iris.Checked = false;
+                Menú_Contextual_Mostrar_Mapa_Altura.Checked = true;
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
+        }
+
+        private void Menú_Contextual_Mostrar_Mapa_Arco_Iris_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Variable_Mostrar_Mapa = 2;
+                Menú_Contextual_Mostrar_Mapa_Biomas.Checked = false;
+                Menú_Contextual_Mostrar_Mapa_Altura.Checked = false;
+                Menú_Contextual_Mostrar_Mapa_Arco_Iris.Checked = true;
+                Establecer_Imagen_Picture(Variable_Mostrar_Mapa == 0 ? (Variable_Mostrar_Minerales ? Imagen_Biomas_Original : Imagen_Biomas_Original_Simple) : (Variable_Mostrar_Mapa == 1 ? Imagen_Altura_Original : Imagen_Arco_Iris_Original), Color_ARGB_Bioma);
+            }
+            catch (Exception Excepción) { Depurador.Escribir_Excepción(Excepción != null ? Excepción.ToString() : null); Variable_Excepción_Total++; Variable_Excepción = true; }
         }
     }
 }
