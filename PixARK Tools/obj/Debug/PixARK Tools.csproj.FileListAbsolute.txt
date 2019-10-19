@@ -1,0 +1,13 @@
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\bin\Debug\PixARK Tools.exe.config
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\bin\Debug\PixARK Tools.exe
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\bin\Debug\PixARK Tools.pdb
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK_Tools.Properties.Resources.resources
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK_Tools.Ventana_Acerca.resources
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK_Tools.Ventana_Depurador_Excepciones.resources
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK_Tools.Ventana_Plantilla.resources
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK_Tools.Ventana_Principal.resources
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK Tools.csproj.GenerateResource.cache
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK Tools.csproj.CoreCompileInputs.cache
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK Tools.exe
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK Tools.pdb
+C:\Users\Jupisoft\Documents\Visual Studio 2017\Projects\PixARK Tools\PixARK Tools\obj\Debug\PixARK_Tools.Ventana_Visor_Bases_Datos.resources
