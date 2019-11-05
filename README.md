@@ -3,7 +3,9 @@ PixARK Tools can load any PixARK world as read-only and show it's full resolutio
 
 Help Viewer for PixARK Tools by Jupisoft 1.0
 
-[Temporary help file] [2019_10_11_13_38_00_894]
+[Temporary help file] [2019_10_19_03_16_48_366]
+
+[Update] Now it has surface maps which include ruins, exposed caves and even player builds, soon with auto-locate ruins.
 
 This application can load the map from any PixARK world and show a lot more details than the in game map, like surface ores and extra biomes, and it also has full resolution (1 pixel per block).
 
